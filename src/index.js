@@ -1,3 +1,6 @@
+//we use env file for secret tokens
+require("dotenv").config();
+
 //using the package discord.js
 const {Client, IntentsBitField} = require('discord.js');
 
@@ -15,7 +18,7 @@ const client = new Client({
 });
 
 //logs the bot in using the token
-client.login('MTI4NTYwNTY3MzYxODM3NDcyNw.G4I4s_.W7y8FybexyIXuGcVUfWGy01DF86NzSn8n-ln9E');
+client.login(process.env.DISCORD_TOKEN);
 
 //when the bot is ready, it will log "ready" to the console
 client.on('ready', (c) => {
