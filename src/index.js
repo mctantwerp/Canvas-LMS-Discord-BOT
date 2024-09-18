@@ -5,7 +5,7 @@ require("dotenv").config();
 const { Client, IntentsBitField } = require("discord.js");
 
 //Api url
-const apiUrl = "https://canvas.kdg.be/api/v1/users/self";
+const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
 const apiKey = process.env.CANVAS_API;
 
 const requestOptions = {
@@ -54,11 +54,15 @@ fetch(apiUrl, requestOptions)
 
 
 function handleData(data){
-    let firstname = data.last_name;
-    console.log(firstname);
+    let startNum = data[0].message.indexOf("<p>");
+    let endNum = data[0].message.indexOf("</p>");
+    console.log(startNum);
+    console.log(endNum);
+    let announcementMessage = data[0].message.substring(startNum + 3, endNum);
+    console.log(announcementMessage);
     client.on("messageCreate", (message) => {
         if(message.content === "firstname"){
-            message.reply(firstname);
+            message.reply("```html " + announcementMessage + " ```");
         }
         
     })
