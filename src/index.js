@@ -4,6 +4,17 @@ require("dotenv").config();
 //using the package discord.js
 const { Client, IntentsBitField } = require("discord.js");
 
+//Api url
+const apiUrl = "https://canvas.kdg.be/api/v1/users/self";
+const apiKey = process.env.CANVAS_API;
+
+const requestOptions = {
+    method: 'GET',
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
+    }
+};
+
 //creating a new client
 //intents are used to specify what events the bot should listen to
 //in this case, the bot will listen to guilds, guild members, guild messages, and guild message content (guild in discord is a server)
@@ -24,11 +35,28 @@ client.on("ready", (c) => {
   console.log(c.user.tag + " has started");
 });
 
+var jsondata = fetch(apiUrl, requestOptions)
+    .then(response=> {
+        if(!response.ok){
+            throw new Error('Network response was not ok!');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error =>{
+        console.error('Error:', error);
+    });
+
+
+console.log(jsondata[7])
+
 //when the bot receives a message, it will respond with "pong"
 client.on("messageCreate", (message) => {
   console.log(message.content);
   if (message.content === "ping") {
-    message.reply("pong");
+    message.reply();
   } else if (message.content === "salam") {
     message.reply("aleikum ");
   } else if (message.content === "marco") {
