@@ -35,7 +35,9 @@ client.on("ready", (c) => {
   console.log(c.user.tag + " has started");
 });
 
-var jsondata = fetch(apiUrl, requestOptions)
+var jsondata;
+
+fetch(apiUrl, requestOptions)
     .then(response=> {
         if(!response.ok){
             throw new Error('Network response was not ok!');
@@ -44,13 +46,23 @@ var jsondata = fetch(apiUrl, requestOptions)
     })
     .then(data => {
         console.log(data);
+        handleData(data);
     })
     .catch(error =>{
         console.error('Error:', error);
     });
 
 
-console.log(jsondata[7])
+function handleData(data){
+    let firstname = data.last_name;
+    console.log(firstname);
+    client.on("messageCreate", (message) => {
+        if(message.content === "firstname"){
+            message.reply(firstname);
+        }
+        
+    })
+}
 
 //when the bot receives a message, it will respond with "pong"
 client.on("messageCreate", (message) => {
