@@ -9,7 +9,7 @@ require("dotenv").config();
 
 //Api url
 const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
-const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_240567";
+const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656";
 const apiKey = process.env.CANVAS_API;
 const samApiKey = process.env.SAM_API_KEY;
 
@@ -22,7 +22,7 @@ const requestOptions = {
 
 const client = bot.initBot();
 
-helperFunctions.apiCall(apiUrl, requestOptions, client);
+helperFunctions.apiCall(apiUrl2, requestOptions, client);
 
 
 
