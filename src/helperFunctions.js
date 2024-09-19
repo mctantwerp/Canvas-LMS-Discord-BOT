@@ -1,6 +1,6 @@
 
 //handling the data
-function handleData(data, client){
+function announcementHTMLtoText(data, client){
     if(data.length === 0){
         return;
     }
@@ -28,7 +28,7 @@ function handleData(data, client){
     })
 }
 
-function apiCall(apiUrl, requestOptions, client){
+function canvasAPICall(apiUrl, requestOptions, client){
     //fetching data from the api
     fetch(apiUrl, requestOptions)
         .then(response=> {
@@ -39,7 +39,7 @@ function apiCall(apiUrl, requestOptions, client){
     })
     .then(data => {
         console.log(data);
-        handleData(data, client);
+        announcementHTMLtoText(data, client);
     })
     .catch(error =>{
         console.error('Error:', error);
@@ -49,6 +49,6 @@ function apiCall(apiUrl, requestOptions, client){
 
 
 module.exports = {
-    handleData,
-    apiCall,
+    announcementHTMLtoText,
+    canvasAPICall,
 }

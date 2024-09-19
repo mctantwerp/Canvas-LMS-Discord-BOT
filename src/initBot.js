@@ -24,7 +24,7 @@ function initBot(){
   
     //when the bot is ready, it will log "ready" to the console
     client.on("ready", (c) => {
-        console.log(c.user.tag + " has started");
+        console.log(c.user.tag + " is ready!");
     });
 
     //returning the client

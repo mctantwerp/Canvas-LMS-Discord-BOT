@@ -1,5 +1,5 @@
 
-const helperFunctions = require("./functions.js");
+const helperFunctions = require("./helperFunctions.js");
 const bot = require("./initBot.js");
 
 
@@ -21,8 +21,7 @@ const requestOptions = {
 };
 
 const client = bot.initBot();
-
-helperFunctions.apiCall(apiUrl2, requestOptions, client);
+helperFunctions.canvasAPICall(apiUrl2, requestOptions, client);
 
 
 
