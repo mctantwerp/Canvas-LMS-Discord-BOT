@@ -1,3 +1,6 @@
+
+const helperFunctions = require("./functions.js");
+
 //we use env file for secret tokens
 require("dotenv").config();
 
@@ -47,7 +50,7 @@ fetch(apiUrl, requestOptions)
     })
     .then(data => {
         console.log(data);
-        handleData(data);
+        helperFunctions.handleData(data, client);
     })
     .catch(error =>{
         console.error('Error:', error);

@@ -1,6 +1,6 @@
 
 //handling the data
-function handleData(data){
+function handleData(data, client){
     let startNum = data[0].message.indexOf("<p>");
     let endNum = data[0].message.indexOf("</p>");
     console.log(startNum);
@@ -13,4 +13,9 @@ function handleData(data){
         }
         
     })
+}
+
+
+module.exports = {
+    handleData,
 }
