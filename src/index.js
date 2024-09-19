@@ -35,8 +35,9 @@ client.on("ready", (c) => {
   console.log(c.user.tag + " has started");
 });
 
-var jsondata;
 
+
+//fetching data from the api
 fetch(apiUrl, requestOptions)
     .then(response=> {
         if(!response.ok){
@@ -53,20 +54,9 @@ fetch(apiUrl, requestOptions)
     });
 
 
-function handleData(data){
-    let startNum = data[0].message.indexOf("<p>");
-    let endNum = data[0].message.indexOf("</p>");
-    console.log(startNum);
-    console.log(endNum);
-    let announcementMessage = data[0].message.substring(startNum + 3, endNum);
-    console.log(announcementMessage);
-    client.on("messageCreate", (message) => {
-        if(message.content === "firstname"){
-            message.reply("```html " + announcementMessage + " ```");
-        }
-        
-    })
-}
+
+
+
 
 //when the bot receives a message, it will respond with "pong"
 client.on("messageCreate", (message) => {
