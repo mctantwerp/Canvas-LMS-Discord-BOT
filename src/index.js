@@ -2,9 +2,6 @@
 const helperFunctions = require("./functions.js");
 const bot = require("./initBot.js");
 
-const { Client, IntentsBitField } = require("discord.js");
-
-
 
 //we use env file for secret tokens
 require("dotenv").config();
@@ -12,37 +9,20 @@ require("dotenv").config();
 
 //Api url
 const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
+const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_240567";
 const apiKey = process.env.CANVAS_API;
+const samApiKey = process.env.SAM_API_KEY;
 
 const requestOptions = {
     method: 'GET',
     headers: {
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${samApiKey}`
     }
 };
 
 const client = bot.initBot();
 
-
-
-//fetching data from the api
-fetch(apiUrl, requestOptions)
-    .then(response=> {
-        if(!response.ok){
-            throw new Error('Network response was not ok!');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-        helperFunctions.handleData(data, client);
-    })
-    .catch(error =>{
-        console.error('Error:', error);
-    });
-
-
-
+helperFunctions.apiCall(apiUrl, requestOptions, client);
 
 
 
