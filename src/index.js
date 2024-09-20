@@ -13,11 +13,12 @@ const requestOptions = require("./requestOptions.js");
 //Api urls
 const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
 const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656";
+const apiUrl3 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49715";
 
 
 //when the bot is ready, execute the following code
 client.on("ready", () => {
-  helperFunctions.canvasAPICall(apiUrl, requestOptions.getLatestAnnouncementCall, client).then(message => {
+  helperFunctions.canvasAPICall(apiUrl3, requestOptions.getLatestAnnouncementCall, client).then(message => {
     announcementHandler.sendMessageToChannel(client, "```" + message + "```", process.env.ANNOUNCEMENT_CHANNEL_ID);
   });
 });
