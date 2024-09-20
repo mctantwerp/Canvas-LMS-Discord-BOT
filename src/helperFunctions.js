@@ -1,4 +1,3 @@
-
 //handling the data
 function announcementHTMLtoText(data, client){
     if(data.length === 0){
@@ -17,7 +16,6 @@ function announcementHTMLtoText(data, client){
         let endNum = startMessage.indexOf("</p>");
         endMessage += startMessage.substring(startNum + 3, endNum) + "\n";
         startMessage = startMessage.replace(startMessage.substring(startNum, endNum + 2), endNum);
-        console.log(endMessage);
     }
 
     client.on("messageCreate", (message) => {
@@ -26,20 +24,23 @@ function announcementHTMLtoText(data, client){
         }
         
     })
+    return endMessage;
 }
 
 function canvasAPICall(apiUrl, requestOptions, client){
     //fetching data from the api
-    fetch(apiUrl, requestOptions)
+    return fetch(apiUrl, requestOptions)
         .then(response=> {
+            //if no response, throw an error
             if(!response.ok){
             throw new Error('Network response was not ok!');
         }
         return response.json();
     })
     .then(data => {
-        console.log(data);
-        announcementHTMLtoText(data, client);
+        //handling the data - converting html markup to text
+        //console.log(data);
+        return announcementHTMLtoText(data, client);
     })
     .catch(error =>{
         console.error('Error:', error);
