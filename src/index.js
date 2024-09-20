@@ -1,28 +1,26 @@
-
-const helperFunctions = require("./functions.js");
 const bot = require("./initBot.js");
-
+const client = bot.initBot();
 
 //we use env file for secret tokens
 require("dotenv").config();
 
 
-//Api url
+const helperFunctions = require("./helperFunctions.js");
+const announcementHandler = require("./announcementHandler.js");
+const requestOptions = require("./requestOptions.js");
+
+
+//Api urls
 const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
 const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656";
-const apiKey = process.env.CANVAS_API;
-const samApiKey = process.env.SAM_API_KEY;
 
-const requestOptions = {
-    method: 'GET',
-    headers: {
-        'Authorization': `Bearer ${samApiKey}`
-    }
-};
 
-const client = bot.initBot();
-
-helperFunctions.apiCall(apiUrl2, requestOptions, client);
+//when the bot is ready, execute the following code
+client.on("ready", () => {
+  helperFunctions.canvasAPICall(apiUrl, requestOptions.getLatestAnnouncementCall, client).then(message => {
+    announcementHandler.sendMessageToChannel(client, "```" + message + "```", process.env.ANNOUNCEMENT_CHANNEL_ID);
+  });
+});
 
 
 
@@ -39,3 +37,8 @@ client.on("messageCreate", (message) => {
     message.reply("tepel");
   }
 });
+
+
+module.exports = {
+  client,
+}
