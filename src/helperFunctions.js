@@ -17,13 +17,6 @@ function announcementHTMLtoText(data, client){
         endMessage += startMessage.substring(startNum + 3, endNum) + "\n";
         startMessage = startMessage.replace(startMessage.substring(startNum, endNum + 2), endNum);
     }
-
-    client.on("messageCreate", (message) => {
-        if(message.content === "!announcement"){
-            message.reply("```" + endMessage + "```");
-        }
-        
-    })
     return endMessage;
 }
 

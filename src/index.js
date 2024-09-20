@@ -18,7 +18,7 @@ const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=cour
 //when the bot is ready, execute the following code
 client.on("ready", () => {
   helperFunctions.canvasAPICall(apiUrl, requestOptions.getLatestAnnouncementCall, client).then(message => {
-    announcementHandler.sendMessageToChannel(client, "```" + message + "```", '1286661342400479297');
+    announcementHandler.sendMessageToChannel(client, "```" + message + "```", process.env.ANNOUNCEMENT_CHANNEL_ID);
   });
 });
 
