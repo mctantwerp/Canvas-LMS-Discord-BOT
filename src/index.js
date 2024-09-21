@@ -24,10 +24,10 @@ client.on("ready", async () => {
   const message = await API.canvasAPICall(apiUrl3, requestOptions.basic, client);
   await announcementHandler.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
 
-  // //DB stuff
-  // const db = await require("./initDB.js").createDbConnection();
-  // const result = await helperFunctions.checkAnnouncementExists(db);
-  // console.log(result);
+  //DB stuff
+  const db = await require("./initDB.js").createDbConnection();
+  const result = await helperFunctions.checkAnnouncementExists(db);
+  console.log(result);
 });
 
 
