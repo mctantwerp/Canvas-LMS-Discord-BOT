@@ -1,8 +1,27 @@
 const bot = require("./initBot.js");
 const client = bot.initBot();
+const mysql = require('mysql2/promise');
 
 //we use env file for secret tokens
 require("dotenv").config();
+
+//DATABASE INIT CONNECTION
+async function createDbConnection() {
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+  });
+  try {
+    await connection.connect(); // Wait for the connection to be established
+    console.log('Connected to MySQL database');
+    return connection; // Return the connection for further use
+  } catch (error) {
+    console.error('Error connecting to MySQL database:', error);
+    throw error; // Rethrow the error to handle it elsewhere
+  }
+}
 
 
 const helperFunctions = require("./helperFunctions.js");
@@ -13,15 +32,18 @@ const requestOptions = require("./requestOptions.js");
 //Api urls
 const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
 const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656";
-
+const apiUrl3 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49715";
 
 //when the bot is ready, execute the following code
-client.on("ready", () => {
-  helperFunctions.canvasAPICall(apiUrl, requestOptions.getLatestAnnouncementCall, client).then(message => {
-    announcementHandler.sendMessageToChannel(client, "```" + message + "```", process.env.ANNOUNCEMENT_CHANNEL_ID);
-  });
-});
+client.on("ready", async () => {
+  console.log(`Bot is online.`);
 
+
+  //DB stuff
+  const db = await createDbConnection();
+  const result = await helperFunctions.checkAnnouncementExists(db);
+  console.log(result);
+});
 
 
 //when the bot receives a message, it will respond with "pong"

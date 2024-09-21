@@ -1,16 +1,18 @@
+const mysql = require('mysql2');
+
 //handling the data
-function announcementHTMLtoText(data, client){
-    if(data.length === 0){
+function announcementHTMLtoText(data, client) {
+    if (data.length === 0) {
         return;
     }
 
-    if(data[0].message === null){
+    if (data[0].message === null) {
         return;
     }
     var endMessage = "";
     var startMessage = data[0].message;
-    
-    while(startMessage.indexOf("<p>") !== -1){
+
+    while (startMessage.indexOf("<p>") !== -1) {
         startMessage = startMessage.replace("&nbsp;", "");
         let startNum = startMessage.indexOf("<p>");
         let endNum = startMessage.indexOf("</p>");
@@ -20,29 +22,54 @@ function announcementHTMLtoText(data, client){
     return endMessage;
 }
 
-function canvasAPICall(apiUrl, requestOptions, client){
+function canvasAPICall(apiUrl, requestOptions, client) {
     //fetching data from the api
     return fetch(apiUrl, requestOptions)
-        .then(response=> {
+        .then(response => {
             //if no response, throw an error
-            if(!response.ok){
-            throw new Error('Network response was not ok!');
-        }
-        return response.json();
-    })
-    .then(data => {
-        //handling the data - converting html markup to text
-        //console.log(data);
-        return announcementHTMLtoText(data, client);
-    })
-    .catch(error =>{
-        console.error('Error:', error);
-    });
+            if (!response.ok) {
+                throw new Error('Network response was not ok!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            //handling the data - converting html markup to text
+            //console.log(data);
+            return announcementHTMLtoText(data, client);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
+function regularCanvasAPICall(apiUrl, requestOptions, client) {
+    //fetching data from the api
+    return fetch(apiUrl, requestOptions)
+        .then(response => {
+            //if no response, throw an error
+            if (!response.ok) {
+                throw new Error('Network response was not ok!');
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+async function checkAnnouncementExists(db) {
+    const [results] = await db.query("SELECT * FROM announcements");
+    return results; // Return only the results
+}
+
 
 
 
 module.exports = {
     announcementHTMLtoText,
     canvasAPICall,
+    regularCanvasAPICall,
+    checkAnnouncementExists,
 }
