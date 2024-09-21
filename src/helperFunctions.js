@@ -9,7 +9,6 @@ function announcementHTMLtoText(data, client) {
     if (data[0].message === null) {
         return;
     }
-    console.log(data[0].message);
     var endMessage = "";
     var startMessage = data[0].message;
 

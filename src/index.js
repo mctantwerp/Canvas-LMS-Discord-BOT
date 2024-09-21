@@ -21,13 +21,12 @@ const apiUrl3 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=cour
 client.on("ready", async () => {
   console.log(`Bot is online.`);
 
-  const message = await API.canvasAPICall(apiUrl3, requestOptions.basic, client);
+  const message = await API.canvasAPICall(apiUrl2, requestOptions.basic, client);
   await announcementHandler.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
 
   //DB stuff
   const db = await require("./initDB.js").createDbConnection();
   const result = await helperFunctions.checkAnnouncementExists(db);
-  console.log(result);
 });
 
 
