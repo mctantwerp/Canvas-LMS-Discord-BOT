@@ -9,55 +9,18 @@ function announcementHTMLtoText(data, client) {
     if (data[0].message === null) {
         return;
     }
+    console.log(data[0].message);
     var endMessage = "";
     var startMessage = data[0].message;
 
-    while (startMessage.indexOf("<p>") !== -1) {
+    while (startMessage.indexOf("&nbsp;") !== -1) {
         startMessage = startMessage.replace("&nbsp;", "");
-        let startNum = startMessage.indexOf("<p>");
-        let endNum = startMessage.indexOf("</p>");
-        endMessage += startMessage.substring(startNum + 3, endNum) + "\n";
-        startMessage = startMessage.replace(startMessage.substring(startNum, endNum + 2), endNum);
     }
-    return endMessage;
+    endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
+    return "```" + endMessage + "```";
 }
 
-function canvasAPICall(apiUrl, requestOptions, client) {
-    //fetching data from the api
-    return fetch(apiUrl, requestOptions)
-        .then(response => {
-            //if no response, throw an error
-            if (!response.ok) {
-                throw new Error('Network response was not ok!');
-            }
-            return response.json();
-        })
-        .then(data => {
-            //handling the data - converting html markup to text
-            //console.log(data);
-            return announcementHTMLtoText(data, client);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-function regularCanvasAPICall(apiUrl, requestOptions, client) {
-    //fetching data from the api
-    return fetch(apiUrl, requestOptions)
-        .then(response => {
-            //if no response, throw an error
-            if (!response.ok) {
-                throw new Error('Network response was not ok!');
-            }
-            return response.json();
-        })
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
+
 
 async function checkAnnouncementExists(db) {
     const [results] = await db.query("SELECT * FROM announcements");
@@ -69,7 +32,5 @@ async function checkAnnouncementExists(db) {
 
 module.exports = {
     announcementHTMLtoText,
-    canvasAPICall,
-    regularCanvasAPICall,
     checkAnnouncementExists,
 }
