@@ -1,5 +1,7 @@
 const helpers = require('./helperFunctions.js');
 
+
+//this api call handles announcement data and returns it
 function canvasAPICall(apiUrl, requestOptions, client) {
     //fetching data from the api
     return fetch(apiUrl, requestOptions)
@@ -18,6 +20,8 @@ function canvasAPICall(apiUrl, requestOptions, client) {
             console.error('Error:', error);
         });
 }
+
+//regular API canvas call, no data being handled
 function regularCanvasAPICall(apiUrl, requestOptions, client) {
     //fetching data from the api
     return fetch(apiUrl, requestOptions)
@@ -29,7 +33,7 @@ function regularCanvasAPICall(apiUrl, requestOptions, client) {
             return response.json();
         })
         .then(data => {
-            return helpers.announcementHTMLtoText(data, client);
+            return data
         })
         .catch(error => {
             console.error('Error:', error);

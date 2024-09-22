@@ -1,6 +1,7 @@
 const bot = require("./initBot.js");
 const client = bot.initBot();
 const API = require("./APICalls.js");
+const sendMessage = require("./sendMessageChannel.js");
 
 //we use env file for secret tokens
 require("dotenv").config();
@@ -21,12 +22,16 @@ const apiUrl3 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=cour
 client.on("ready", async () => {
   console.log(`Bot is online.`);
 
-  const message = await API.canvasAPICall(apiUrl2, requestOptions.basic, client);
-  await announcementHandler.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
 
-  //DB stuff
+  //make connection to database
   const db = await require("./initDB.js").createDbConnection();
-  const result = await helperFunctions.checkAnnouncementExists(db);
+
+  //API stuff
+  message = await API.canvasAPICall(apiUrl2, requestOptions.basic, client);
+  await sendMessage.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
+
+  //get announcements from DB and post in the right discord channel
+  announcementHandler.postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions.basic);
 });
 
 

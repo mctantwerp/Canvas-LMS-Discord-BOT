@@ -20,16 +20,6 @@ function announcementHTMLtoText(data, client) {
 }
 
 
-
-async function checkAnnouncementExists(db) {
-    const [results] = await db.query("SELECT * FROM announcements");
-    return results; // Return only the results
-}
-
-
-
-
 module.exports = {
     announcementHTMLtoText,
-    checkAnnouncementExists,
 }
