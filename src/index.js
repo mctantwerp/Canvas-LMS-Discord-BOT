@@ -34,8 +34,48 @@ client.on("ready", async () => {
   //announcementHandler.postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions.basic);
 
 
-  API.pollingCanvasAPICall(apiUrl, requestOptions.basic, 1500, client);
-  //sendMessage.sendMessageToChannel(client, await API.pollingCanvasAPICall(apiUrl, requestOptions.basic, 1500, client), "1287211078249611287");
+  //polls the api every 1500ms, then sends the data to the channel.
+  //API.pollingCanvasAPICall(apiUrl, requestOptions.basic, 1500, client));
+
+
+  //poll for announcements
+  async function pollAnnouncements() {
+
+    //bool to check if still polling
+    var isPolling = false;
+
+    const pollData = async function () {
+
+      //if still polling, return nothing
+      if (isPolling) {
+        console.log("Still polling..");
+        return
+      };
+
+
+      //get announcements from specific course
+      var announcements = await API.regularCanvasAPICall(apiUrl2, requestOptions.basic, client);
+
+      //get the posted announcements from the database
+      var postedIds = await announcementHandler.getPostedAnnouncements(db);
+
+      //filter for new announcements, comparing it with db stored announcements
+      var newAnnouncements = announcements.filter(ann => !postedIds.includes(ann.id));
+
+      //if new announcements are found, post them in channel and save to db
+      if (newAnnouncements.length) {
+        await sendMessage.postAnnouncementsAndSave(client, newAnnouncements, "1285960043761766512", db);
+      }
+      else{
+        console.log("No new announcements found.");
+      }
+      //reset polling bool because function is done
+      isPolling = false;
+    }
+    setInterval(pollData, 5000);
+  }
+  pollAnnouncements();
+
 });
 
 
@@ -44,7 +84,7 @@ client.on("ready", async () => {
 
 //when the bot receives a message, it will respond with "pong"
 client.on("messageCreate", (message) => {
-  console.log(message.content);
+  //console.log(message.content);
   if (message.content === "ping") {
     message.reply("pong");
   } else if (message.content === "salam") {

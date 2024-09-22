@@ -18,8 +18,19 @@ function announcementHTMLtoText(data, client) {
     endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
     return "```" + endMessage + "```";
 }
+function announcementHTMLtoTextString(data) {
+    var endMessage = "";
+    var startMessage = data;
+
+    while (startMessage.indexOf("&nbsp;") !== -1) {
+        startMessage = startMessage.replace("&nbsp;", "");
+    }
+    endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
+    return "```" + endMessage + "```";
+}
 
 
 module.exports = {
     announcementHTMLtoText,
+    announcementHTMLtoTextString
 }
