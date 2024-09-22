@@ -27,11 +27,15 @@ client.on("ready", async () => {
   const db = await require("./initDB.js").createDbConnection();
 
   //API stuff
-  message = await API.canvasAPICall(apiUrl2, requestOptions.basic, client);
-  await sendMessage.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
+  //message = await API.canvasAPICall(apiUrl2, requestOptions.basic, client);
+  //await sendMessage.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
 
   //get announcements from DB and post in the right discord channel
-  announcementHandler.postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions.basic);
+  //announcementHandler.postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions.basic);
+
+
+  API.pollingCanvasAPICall(apiUrl, requestOptions.basic, 1500, client);
+  //sendMessage.sendMessageToChannel(client, await API.pollingCanvasAPICall(apiUrl, requestOptions.basic, 1500, client), "1287211078249611287");
 });
 
 
