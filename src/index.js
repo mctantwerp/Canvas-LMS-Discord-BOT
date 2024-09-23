@@ -15,27 +15,15 @@ const requestOptions = require("./requestOptions.js");
 
 //Api urls
 const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
-const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656";
+const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656&per_page=1";
 const apiUrl3 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49715";
 
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
   console.log(`Bot is online.`);
 
-
   //make connection to database
   const db = await require("./initDB.js").createDbConnection();
-
-  //API stuff
-  //message = await API.canvasAPICall(apiUrl2, requestOptions.basic, client);
-  //await sendMessage.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
-
-  //get announcements from DB and post in the right discord channel
-  //announcementHandler.postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions.basic);
-
-
-  //polls the api every 1500ms, then sends the data to the channel.
-  //API.pollingCanvasAPICall(apiUrl, requestOptions.basic, 1500, client));
 
 
   //poll for announcements
