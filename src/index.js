@@ -15,23 +15,55 @@ const requestOptions = require("./requestOptions.js");
 
 //Api urls
 const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
-const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656";
+const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656&per_page=1";
 const apiUrl3 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49715";
 
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
   console.log(`Bot is online.`);
 
-
   //make connection to database
   const db = await require("./initDB.js").createDbConnection();
 
-  //API stuff
-  message = await API.canvasAPICall(apiUrl2, requestOptions.basic, client);
-  await sendMessage.sendMessageToChannel(client, message, process.env.ANNOUNCEMENT_CHANNEL_ID);
 
-  //get announcements from DB and post in the right discord channel
-  announcementHandler.postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions.basic);
+  //poll for announcements
+  async function pollAnnouncements() {
+
+    //bool to check if still polling
+    var isPolling = false;
+
+    const pollData = async function () {
+
+      //if still polling, return nothing
+      if (isPolling) {
+        console.log("Still polling..");
+        return
+      };
+
+
+      //get announcements from specific course
+      var announcements = await API.regularCanvasAPICall(apiUrl2, requestOptions.basic, client);
+
+      //get the posted announcements from the database
+      var postedIds = await announcementHandler.getPostedAnnouncements(db);
+
+      //filter for new announcements, comparing it with db stored announcements
+      var newAnnouncements = announcements.filter(ann => !postedIds.includes(ann.id));
+
+      //if new announcements are found, post them in channel and save to db
+      if (newAnnouncements.length) {
+        await sendMessage.postAnnouncementsAndSave(client, newAnnouncements, "1285960043761766512", db);
+      }
+      else{
+        console.log("No new announcements found.");
+      }
+      //reset polling bool because function is done
+      isPolling = false;
+    }
+    setInterval(pollData, 5000);
+  }
+  pollAnnouncements();
+
 });
 
 
@@ -40,7 +72,7 @@ client.on("ready", async () => {
 
 //when the bot receives a message, it will respond with "pong"
 client.on("messageCreate", (message) => {
-  console.log(message.content);
+  //console.log(message.content);
   if (message.content === "ping") {
     message.reply("pong");
   } else if (message.content === "salam") {

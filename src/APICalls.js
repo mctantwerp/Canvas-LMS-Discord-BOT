@@ -1,4 +1,5 @@
 const helpers = require('./helperFunctions.js');
+const sendMessage = require("./sendMessageChannel.js");
 
 
 //this api call handles announcement data and returns it
@@ -40,7 +41,23 @@ function regularCanvasAPICall(apiUrl, requestOptions, client) {
         });
 }
 
+function pollingCanvasAPICall(apiUrl, requestOptions, interval, client) {
+    // Function to perform API polling
+    const pollData = async () => {
+        var data = await canvasAPICall(apiUrl, requestOptions, client);
+        //is there data? then return it
+        if (data) {
+            await sendMessage.sendMessageToChannel(client, data, "1287211078249611287");
+        } else {
+            console.log('No data or an error occurred during polling.');
+        }
+    };
+    setInterval(pollData, interval);
+}
+
+
 module.exports = {
     canvasAPICall,
     regularCanvasAPICall,
+    pollingCanvasAPICall
 };

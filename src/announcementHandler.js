@@ -1,5 +1,6 @@
 const API = require("./APICalls.js");
 const sendMessage = require("./sendMessageChannel.js");
+const helperFunctions = require("./helperFunctions.js");
 
 async function postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions) {
   //get database items, return array
@@ -15,6 +16,21 @@ async function postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions
   });
 }
 
+
+
+async function saveAnnouncement(announcement, db, announcementHTMLtoText) {
+  await db.query('INSERT INTO announcements (canvas_id, title, description) VALUES (?, ?, ?)', [announcement.id, announcement.title, announcementHTMLtoText]);
+}
+
+
+async function getPostedAnnouncements(db) {
+  const [rows] = await db.query('SELECT canvas_id FROM announcements');
+  // return an array of IDs
+  return rows.map(row => row.canvas_id);
+}
+
 module.exports = {
   postAnnouncementsFromDatabaseToDiscord,
+  saveAnnouncement,
+  getPostedAnnouncements,
 };
