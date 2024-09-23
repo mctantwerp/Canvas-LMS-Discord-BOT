@@ -20,6 +20,16 @@ const getLatestAnnouncementCall = {
     }
 };
 
+const getEnrolledCourses = {
+    method: 'GET',
+    headers: {  
+        'Authorization': `Bearer ${samApiKey}`
+    },
+    params: {
+        enrollment_state: 'active',
+    }
+};
+
 module.exports = {
-    basic, getLatestAnnouncementCall
+    basic, getLatestAnnouncementCall, getEnrolledCourses
 }

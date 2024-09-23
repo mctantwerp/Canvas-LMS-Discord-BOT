@@ -2,6 +2,7 @@ const bot = require("./initBot.js");
 const client = bot.initBot();
 const API = require("./APICalls.js");
 const sendMessage = require("./sendMessageChannel.js");
+const apiUrlGenerator = require("./apiUrlGenerator.js");
 
 //we use env file for secret tokens
 require("dotenv").config();
@@ -62,7 +63,11 @@ client.on("ready", async () => {
     }
     setInterval(pollData, 5000);
   }
-  pollAnnouncements();
+  //pollAnnouncements();
+
+  await apiUrlGenerator.generateCourseUrls(client, requestOptions.getEnrolledCourses); //generate the api url
+
+
 
 });
 
