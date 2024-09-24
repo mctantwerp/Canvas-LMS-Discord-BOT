@@ -1,27 +1,29 @@
-const announcementHandler = require('./announcementHandler.js');
-const helperFunctions = require('./helperFunctions.js');
+const announcementHandler = require("./announcementHandler.js");
+const helperFunctions = require("./helperFunctions.js");
 
 async function sendMessageToChannel(client, message, channel_id) {
   //wait for promise to be resolved
   const channel = await client.channels.fetch(channel_id);
-  channel.send(message)
-};
+  channel.send(message);
+}
 
 async function postAnnouncementsAndSave(client, announcements, channel_id, db) {
   //wait for promise to be resolved
   const channel = await client.channels.fetch(channel_id);
   for (const announcement of announcements) {
     //start conversion html to text
-    const announcementHTMLtoText = helperFunctions.announcementHTMLtoTextString(announcement.message);
-    //send it to the channel
-    await channel.send(announcementHTMLtoText)
+    const announcementHTMLtoText = helperFunctions.announcementHTMLtoTextString(
+      announcement.message
+    );
+    //send it to the channel and log in console
+    await channel.send(announcementHTMLtoText);
+    console.log("New announcements found and posted.");
     //save it in DB
     await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText);
   }
-};
-
+}
 
 module.exports = {
   sendMessageToChannel,
   postAnnouncementsAndSave,
-}
+};
