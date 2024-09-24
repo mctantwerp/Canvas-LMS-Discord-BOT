@@ -10,10 +10,7 @@ function initBot() {
   //in this case, the bot will listen to guilds, guild members, guild messages, and guild message content (guild in discord is a server)
   const client = new Client({
     intents: [
-      IntentsBitField.Flags.Guilds,
-      IntentsBitField.Flags.GuildMembers,
       IntentsBitField.Flags.GuildMessages,
-      IntentsBitField.Flags.MessageContent,
     ],
   });
 
