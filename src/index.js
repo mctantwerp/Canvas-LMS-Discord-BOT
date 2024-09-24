@@ -11,6 +11,7 @@ require("dotenv").config();
 const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
 const requestOptions = require("./requestOptions.js");
+const pusherFunctions = require("./pusherFunctions.js");
 
 
 //Api urls
@@ -25,45 +26,51 @@ client.on("ready", async () => {
   //make connection to database
   const db = await require("./initDB.js").createDbConnection();
 
+  const apiData = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, process.env.CANVAS_API);
+  await console.log(helperFunctions.announcementHTMLtoText(apiData, client));
 
-  //poll for announcements
-  async function pollAnnouncements() {
+  //calls the sendDataToPi function with data gathererd from api
+  await pusherFunctions.sendDataToPi(helperFunctions.announcementHTMLtoTextString(apiData[0].message));
 
-    //bool to check if still polling
-    var isPolling = false;
+//   //poll for announcements
+//   async function pollAnnouncements() {
 
-    const pollData = async function () {
+//     //bool to check if still polling
+//     var isPolling = false;
 
-      //if still polling, return nothing
-      if (isPolling) {
-        console.log("Still polling..");
-        return
-      };
+//     const pollData = async function () {
+
+//       //if still polling, return nothing
+//       if (isPolling) {
+//         console.log("Still polling..");
+//         return
+//       };
 
 
-      //get announcements from specific course
-      var announcements = await API.regularCanvasAPICall(apiUrl2, requestOptions.basic, client);
+//       //get announcements from specific course
+//       var announcements = await API.regularCanvasAPICall(apiUrl2, requestOptions.basic, client);
 
-      //get the posted announcements from the database
-      var postedIds = await announcementHandler.getPostedAnnouncements(db);
+//       //get the posted announcements from the database
+//       var postedIds = await announcementHandler.getPostedAnnouncements(db);
 
-      //filter for new announcements, comparing it with db stored announcements
-      var newAnnouncements = announcements.filter(ann => !postedIds.includes(ann.id));
+//       //filter for new announcements, comparing it with db stored announcements
+//       var newAnnouncements = announcements.filter(ann => !postedIds.includes(ann.id));
 
-      //if new announcements are found, post them in channel and save to db
-      if (newAnnouncements.length) {
-        await sendMessage.postAnnouncementsAndSave(client, newAnnouncements, "1285960043761766512", db);
-      }
-      else{
-        console.log("No new announcements found.");
-      }
-      //reset polling bool because function is done
-      isPolling = false;
-    }
-    setInterval(pollData, 5000);
-  }
-  pollAnnouncements();
+//       //if new announcements are found, post them in channel and save to db
+//       if (newAnnouncements.length) {
+//         await sendMessage.postAnnouncementsAndSave(client, newAnnouncements, "1285960043761766512", db);
+//       }
+//       else{
+//         console.log("No new announcements found.");
+//       }
+//       //reset polling bool because function is done
+//       isPolling = false;
+//     }
+//     setInterval(pollData, 5000);
+//   }
+//   pollAnnouncements();
 
+// });
 });
 
 

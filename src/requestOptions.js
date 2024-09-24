@@ -5,7 +5,7 @@ const samApiKey = process.env.SAM_API_KEY;
 const basic = {
     method: 'GET',
     headers: {
-        'Authorization': `Bearer ${samApiKey}`
+        'Authorization': `Bearer ${apiKey}`
     }
 };
 
