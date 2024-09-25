@@ -5,7 +5,7 @@ async function saveCoursesToDB(courses, db, courseURL) {
       courseURL,
     ]);
   } catch (error) {
-    console.log("Error saving courses to database");
+    console.log("Error saving courses to database. If courses are already in DB, ignore error.");
   }
 }
 

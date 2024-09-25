@@ -26,10 +26,10 @@ client.on("ready", async () => {
   const db = await require("./initDB.js").createDbConnection();
 
   //generate course table information for all enrolled courses.
-  //await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
+  await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
   //poll for announcements
-  pollingFunctions.pollAnnouncements(db, apiUrl2, requestOptions.basic, client);
+  pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
 });
 
 //when the bot receives a message, it will respond with "pong"

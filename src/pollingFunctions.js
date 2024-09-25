@@ -4,7 +4,7 @@ const announcementHandler = require("./announcementHandler.js");
 const sendMessage = require("./sendMessageChannel.js");
 require("dotenv").config();
 
-async function pollAnnouncements(db, apiUrl, requestOptions, client) {
+async function pollAnnouncements(db, requestOptions, client) {
   // Bool to check if still polling
   let isPolling = false;
 
@@ -21,13 +21,13 @@ async function pollAnnouncements(db, apiUrl, requestOptions, client) {
     try {
       // Get currently enlisted courses from DB
       const courses = await courseHandler.getAllCourses(db);
-      console.log(courses);
+      console.log("Courses fetched from DB:", courses);
 
       // Loop through each course and fetch announcements
       for (const course of courses) {
-        const courseApiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course.course_id}/announcements`; // Adjust as needed
+        const courseApiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course.course_id}`;
         const announcements = await API.regularCanvasAPICall(courseApiUrl, requestOptions, client);
-        
+
         // Get the posted announcement IDs from the database
         const postedIds = await announcementHandler.getPostedAnnouncements(db, course.id);
 
@@ -36,15 +36,15 @@ async function pollAnnouncements(db, apiUrl, requestOptions, client) {
 
         // If new announcements are found, post them in channel and save to DB
         if (newAnnouncements.length) {
-          // await sendMessage.postAnnouncementsAndSave(
-          //   client,
-          //   newAnnouncements,
-          //   "1285960043761766512", // Replace with your channel ID
-          //   db
-          // );
-          console.log("New announcements found for course", course.id);
+          await sendMessage.postAnnouncementsAndSave(
+            client,
+            newAnnouncements,
+            process.env.ANNOUNCEMENT_CHANNEL_ID, // Replace with your channel ID
+            db
+          );
+          console.log("New announcements found for course", course.course_id);
         } else {
-          console.log(`No new announcements found for course ${course.id}.`);
+          console.log(`No new announcements found for course ${course.course_id}.`);
         }
       }
     } catch (error) {

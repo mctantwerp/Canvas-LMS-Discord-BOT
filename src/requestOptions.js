@@ -5,14 +5,14 @@ const samApiKey = process.env.SAM_API_KEY;
 const basic = {
     method: 'GET',
     headers: {
-        'Authorization': `Bearer ${samApiKey}`
+        'Authorization': `Bearer ${apiKey}`
     }
 };
 
 const getLatestAnnouncementCall = {
     method: 'GET',
-    headers: {  
-        'Authorization': `Bearer ${samApiKey}`
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
     },
     params: {
         only_announcements: true,
@@ -22,8 +22,8 @@ const getLatestAnnouncementCall = {
 
 const getEnrolledCourses = {
     method: 'GET',
-    headers: {  
-        'Authorization': `Bearer ${samApiKey}`
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
     },
     params: {
         enrollment_state: 'active',

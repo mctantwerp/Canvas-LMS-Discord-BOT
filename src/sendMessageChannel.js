@@ -17,7 +17,6 @@ async function postAnnouncementsAndSave(client, announcements, channel_id, db) {
     );
     //send it to the channel and log in console
     await channel.send(announcementHTMLtoText);
-    console.log("New announcements found and posted.");
     //save it in DB
     await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText);
   }
