@@ -5,6 +5,7 @@ const sendMessage = require("./sendMessageChannel.js");
 const apiUrlGenerator = require("./apiUrlGenerator.js");
 const courseHandler = require("./courseHandler.js");
 const pollingFunctions = require("./pollingFunctions.js");
+const reminderController = require("./reminder.js");
 
 //we use env file for secret tokens
 require("dotenv").config();
