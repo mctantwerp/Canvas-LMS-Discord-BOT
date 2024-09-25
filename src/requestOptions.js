@@ -29,7 +29,16 @@ const getEnrolledCourses = {
         enrollment_state: 'active',
     }
 };
+const getUpcomingAssignments = {
+    method: 'GET',
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
+    },
+    params: {
+        bucket: 'upcoming',
+    }
+};
 
 module.exports = {
-    basic, getLatestAnnouncementCall, getEnrolledCourses
+    basic, getLatestAnnouncementCall, getEnrolledCourses, getUpcomingAssignments
 }
