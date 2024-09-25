@@ -30,7 +30,7 @@ client.on("ready", async () => {
   await console.log(helperFunctions.announcementHTMLtoText(apiData, client));
 
   //calls the sendDataToPi function with data gathererd from api
-  await pusherFunctions.sendDataToPi(helperFunctions.announcementHTMLtoTextString(apiData[0].message));
+  await pusherFunctions.sendDataToPi(apiData[0].message);
 
 //   //poll for announcements
 //   async function pollAnnouncements() {

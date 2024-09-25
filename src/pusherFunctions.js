@@ -1,5 +1,6 @@
 const Pusher = require('pusher');
 
+
 function sendDataToPi(stringMessage){
     const pusher = new Pusher({
         appId: "1867626",
@@ -19,6 +20,6 @@ function sendDataToPi(stringMessage){
       return;
 }
 
-module.exports = {
+module.exports ={
     sendDataToPi
 };
