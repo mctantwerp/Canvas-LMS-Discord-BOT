@@ -31,6 +31,10 @@ client.on("ready", async () => {
 
   //poll for announcements
   pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
+
+  apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
+
+
 });
 
 //when the bot receives a message, it will respond with "pong"
