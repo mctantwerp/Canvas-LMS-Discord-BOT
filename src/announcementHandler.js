@@ -18,8 +18,8 @@ async function postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions
 
 
 
-async function saveAnnouncement(announcement, db, announcementHTMLtoText) {
-  await db.query('INSERT INTO announcements (canvas_id, title, description) VALUES (?, ?, ?)', [announcement.id, announcement.title, announcementHTMLtoText]);
+async function saveAnnouncement(announcement, db, announcementHTMLtoText, course_id) {
+  await db.query('INSERT INTO announcements (canvas_id, title, description, posted_at, course_id) VALUES (?, ?, ?, ?, ?)', [announcement.id, announcement.title, announcementHTMLtoText, announcement.created_at, course_id]);
 }
 
 

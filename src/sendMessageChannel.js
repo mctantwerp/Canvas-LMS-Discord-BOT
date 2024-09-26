@@ -7,7 +7,7 @@ async function sendMessageToChannel(client, message, channel_id) {
   channel.send(message);
 }
 
-async function postAnnouncementsAndSave(client, announcements, channel_id, db) {
+async function postAnnouncementsAndSave(client, announcements, channel_id, db, course_id) {
   //wait for promise to be resolved
   const channel = await client.channels.fetch(channel_id);
   for (const announcement of announcements) {
@@ -18,7 +18,7 @@ async function postAnnouncementsAndSave(client, announcements, channel_id, db) {
     //send it to the channel and log in console
     await channel.send(announcementHTMLtoText);
     //save it in DB
-    await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText);
+    await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText, course_id);
   }
 }
 
