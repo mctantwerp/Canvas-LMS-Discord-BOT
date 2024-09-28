@@ -38,7 +38,7 @@ async function sendReminder(apiData){
         const year = date.split(/[-T]/)[0];
 
         const currentDate = new Date().toISOString();
-        const currentDay = 29//currentDate.split(/[-T]/)[2];
+        const currentDay = currentDate.split(/[-T]/)[2];
         const currentMonth = currentDate.split(/[-T]/)[1];
         const currentYear = currentDate.split(/[-T]/)[0];
 
