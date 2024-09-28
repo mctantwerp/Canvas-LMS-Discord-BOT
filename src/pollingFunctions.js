@@ -19,11 +19,11 @@ async function pollAnnouncements(db, requestOptions, client) {
     isPolling = true;
 
     try {
-      // Get currently enlisted courses from DB
+      //get currently enlisted courses from DB
       const courses = await courseHandler.getAllCourses(db);
       console.log("Courses fetched from DB:", courses);
 
-      // Loop through each course and fetch announcements
+      //loop through each course and fetch announcements
       for (const course of courses) {
         const courseApiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course.course_id}`;
         const announcements = await API.regularCanvasAPICall(courseApiUrl, requestOptions, client);
@@ -40,7 +40,8 @@ async function pollAnnouncements(db, requestOptions, client) {
             client,
             newAnnouncements,
             process.env.ANNOUNCEMENT_CHANNEL_ID, // Replace with your channel ID
-            db
+            db,
+            course.course_id
           );
           console.log("New announcements found for course", course.course_id);
         } else {
@@ -50,7 +51,7 @@ async function pollAnnouncements(db, requestOptions, client) {
     } catch (error) {
       console.error("Error polling announcements:", error);
     } finally {
-      // Reset polling bool because function is done
+      //reset polling bool because function is done
       isPolling = false;
     }
   };
