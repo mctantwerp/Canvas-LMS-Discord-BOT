@@ -5,7 +5,7 @@ async function saveCoursesToDB(courses, db, courseURL) {
       courseURL,
     ]);
   } catch (error) {
-    console.log("Error saving courses to database. If courses are already in DB, ignore error.");
+    //console.log("Error saving courses to database. If courses are already in DB, ignore error.");
   }
 }
 
@@ -14,7 +14,7 @@ async function getAllCourses(db) {
     const [courses] = await db.query("SELECT * FROM courses");
     return courses;
   } catch (error) {
-    console.log("Error fetching the courses from database");
+    //console.log("Error fetching the courses from database");
   }
 }
 

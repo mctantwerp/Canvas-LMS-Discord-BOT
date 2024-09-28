@@ -2,6 +2,15 @@ const announcementHandler = require("./announcementHandler.js");
 const helperFunctions = require("./helperFunctions.js");
 
 async function sendMessageToChannel(client, message, channel_id) {
+  if(message === undefined){
+    return;
+  }
+  if(message === null){
+    return;
+  }
+  if(message === ""){
+    return;
+  }
   //wait for promise to be resolved
   const channel = await client.channels.fetch(channel_id);
   channel.send(message);

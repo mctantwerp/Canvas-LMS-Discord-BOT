@@ -11,7 +11,7 @@ async function pollAnnouncements(db, requestOptions, client) {
   const pollData = async function () {
     // If still polling, return nothing
     if (isPolling) {
-      console.log("Still polling..");
+      //console.log("Still polling..");
       return;
     }
 
@@ -21,7 +21,7 @@ async function pollAnnouncements(db, requestOptions, client) {
     try {
       //get currently enlisted courses from DB
       const courses = await courseHandler.getAllCourses(db);
-      console.log("Courses fetched from DB:", courses);
+      //console.log("Courses fetched from DB:", courses);
 
       //loop through each course and fetch announcements
       for (const course of courses) {
@@ -43,13 +43,13 @@ async function pollAnnouncements(db, requestOptions, client) {
             db,
             course.course_id
           );
-          console.log("New announcements found for course", course.course_id);
+          //console.log("New announcements found for course", course.course_id);
         } else {
-          console.log(`No new announcements found for course ${course.course_id}.`);
+          //console.log(`No new announcements found for course ${course.course_id}.`);
         }
       }
     } catch (error) {
-      console.error("Error polling announcements:", error);
+      //console.error("Error polling announcements:", error);
     } finally {
       //reset polling bool because function is done
       isPolling = false;

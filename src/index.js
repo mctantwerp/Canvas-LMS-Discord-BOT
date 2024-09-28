@@ -26,6 +26,16 @@ client.on("ready", async () => {
   //make connection to database
   const db = await require("./initDB.js").createDbConnection();
 
+
+  const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49719/assignments";
+  const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.basic, client);
+  await apiData.forEach(async(element) => {
+    const reminderData = await reminderController.sendReminder(element);
+    const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
+    sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");    
+  });
+  
+
   //generate course table information for all enrolled courses.
   await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 

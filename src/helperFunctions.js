@@ -20,6 +20,12 @@ function announcementHTMLtoText(data, client) {
     return "```" + endMessage + "```";
 }
 function announcementHTMLtoTextString(data) {
+    if (data === null) {
+        return;
+    }
+    if (data === undefined) {
+        return;
+    }
     //function to convert html to string
     var endMessage = "";
     var startMessage = data.toString();

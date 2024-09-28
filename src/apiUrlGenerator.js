@@ -42,7 +42,7 @@ async function saveAssignmentsToDB(client, requestOptions, db) {
         }
         //if not working, catch error
         catch (error) {
-          console.log("Error saving assignment to DB. Duplicate entry?");
+          //console.log("Error saving assignment to DB. Duplicate entry?");
         }
       }
 

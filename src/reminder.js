@@ -32,22 +32,19 @@ async function test(apiData){
 }
 
 async function sendReminder(apiData){
-    const date = apiData[2].due_at;
-    const day = date.split(/[-T]/)[2];
-    const month = date.split(/[-T]/)[1];
-    const year = date.split(/[-T]/)[0];
+        const date = apiData.due_at;
+        const day = date.split(/[-T]/)[2];
+        const month = date.split(/[-T]/)[1];
+        const year = date.split(/[-T]/)[0];
 
-    const currentDate = new Date().toISOString();
-    const currentDay = 29//currentDate.split(/[-T]/)[2];
-    const currentMonth = currentDate.split(/[-T]/)[1];
-    const currentYear = currentDate.split(/[-T]/)[0];
+        const currentDate = new Date().toISOString();
+        const currentDay = 29//currentDate.split(/[-T]/)[2];
+        const currentMonth = currentDate.split(/[-T]/)[1];
+        const currentYear = currentDate.split(/[-T]/)[0];
 
-    if(year === currentYear && month === currentMonth && day-1 === currentDay){
-        return apiData[2].description;
-    }else{
-        console.log(apiData[2]);
-        console.log("Ge hebt nog tijd");
-    }
+        if(year === currentYear && month === currentMonth && day-1 === currentDay){
+            return apiData.description;
+        }
 }
 
 module.exports = {
