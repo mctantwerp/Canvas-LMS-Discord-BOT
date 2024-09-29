@@ -20,9 +20,15 @@ function announcementHTMLtoText(data, client) {
     return "```" + endMessage + "```";
 }
 function announcementHTMLtoTextString(data) {
+    if (data === null) {
+        return;
+    }
+    if (data === undefined) {
+        return;
+    }
     //function to convert html to string
     var endMessage = "";
-    var startMessage = data + "";
+    var startMessage = data.toString();
     while (startMessage.indexOf("&nbsp;") !== -1) {
         startMessage = startMessage.replace("&nbsp;", "");
     }

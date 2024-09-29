@@ -11,8 +11,8 @@ const basic = {
 
 const getLatestAnnouncementCall = {
     method: 'GET',
-    headers: {  
-        'Authorization': `Bearer ${samApiKey}`
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
     },
     params: {
         only_announcements: true,
@@ -20,6 +20,25 @@ const getLatestAnnouncementCall = {
     }
 };
 
+const getEnrolledCourses = {
+    method: 'GET',
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
+    },
+    params: {
+        enrollment_state: 'active',
+    }
+};
+const getUpcomingAssignments = {
+    method: 'GET',
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
+    },
+    params: {
+        bucket: 'upcoming',
+    }
+};
+
 module.exports = {
-    basic, getLatestAnnouncementCall
+    basic, getLatestAnnouncementCall, getEnrolledCourses, getUpcomingAssignments
 }
