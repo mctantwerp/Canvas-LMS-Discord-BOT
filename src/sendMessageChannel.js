@@ -26,7 +26,11 @@ async function postAnnouncementsAndSave(client, announcements, channel_id, db, c
     );
     //send it to the channel and log in console
     await channel.send(
-      ```**Title:** ${announcement.title}\n**Description:** ${announcementHTMLtoText}\n**Posted by:** ${announcement.author.display_name}```);
+      `\`\`\`
+Title: ${announcement.title}\n
+Description: ${announcementHTMLtoText}\n
+Posted by: ${announcement.author.display_name}
+\`\`\``);
     await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText, course_id);
   }
 }

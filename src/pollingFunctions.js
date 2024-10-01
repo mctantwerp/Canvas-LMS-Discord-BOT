@@ -60,7 +60,7 @@ async function pollAnnouncements(db, requestOptions, client) {
     }
   };
 
-  setInterval(pollData, 200);
+  setInterval(pollData, 6000);
 }
 module.exports = {
   pollAnnouncements,
