@@ -35,18 +35,18 @@ client.on("ready", async () => {
   // pusherFunctions.sendDataToPi(apiData);
 
 
-  await apiData.forEach(async(element) => {
-    const reminderData = await reminderController.sendReminder(element);
-    const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
-    sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");    
-    console.log(reminderMessage);
-  });
+  // await apiData.forEach(async(element) => {
+  //   const reminderData = await reminderController.sendReminder(element);
+  //   const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
+  //   sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");    
+  //   console.log(reminderMessage);
+  // });
 
   //generate course table information for all enrolled courses.
   await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
   //poll for announcements
-  //pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
+  pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
 
   apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
 });

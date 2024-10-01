@@ -11,7 +11,7 @@ async function pollAnnouncements(db, requestOptions, client) {
   const pollData = async function () {
     // If still polling, return nothing
     if (isPolling) {
-      //console.log("Still polling..");
+      console.log("Still polling..");
       return;
     }
 
@@ -25,6 +25,7 @@ async function pollAnnouncements(db, requestOptions, client) {
 
       //loop through each course and fetch announcements
       for (const course of courses) {
+        console.log(course);
         const courseApiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course.course_id}`;
         const announcements = await API.regularCanvasAPICall(courseApiUrl, requestOptions, client);
 
@@ -33,7 +34,6 @@ async function pollAnnouncements(db, requestOptions, client) {
 
         // Filter for new announcements, comparing them with DB stored announcements
         const newAnnouncements = announcements.filter((ann) => !postedIds.includes(ann.id));
-        console.log(newAnnouncements);
 
         // If new announcements are found, post them in channel and save to DB
         if (newAnnouncements.length) {
@@ -44,9 +44,9 @@ async function pollAnnouncements(db, requestOptions, client) {
             db,
             course.course_id
           );
-          //console.log("New announcements found for course", course.course_id);
+          console.log("New announcements found for course", course.course_id);
         } else {
-          //console.log(`No new announcements found for course ${course.course_id}.`);
+          console.log(`No new announcements found for course ${course.course_id}.`);
         }
       }
     } catch (error) {
@@ -58,7 +58,7 @@ async function pollAnnouncements(db, requestOptions, client) {
   };
 
   // Poll every minute (60000 ms)
-  setInterval(pollData, 20000);
+  setInterval(pollData, 5000);
 }
 module.exports = {
   pollAnnouncements,
