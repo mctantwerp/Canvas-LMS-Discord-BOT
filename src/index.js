@@ -46,7 +46,8 @@ client.on("ready", async () => {
   await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
   //poll for announcements
-  pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
+  //pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
+
   apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
 });
 
