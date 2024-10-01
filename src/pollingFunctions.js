@@ -25,7 +25,6 @@ async function pollAnnouncements(db, requestOptions, client) {
 
       //loop through each course and fetch announcements
       for (const course of courses) {
-        console.log(course);
         const courseApiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course.course_id}`;
         const announcements = await API.regularCanvasAPICall(courseApiUrl, requestOptions, client);
 
@@ -58,7 +57,7 @@ async function pollAnnouncements(db, requestOptions, client) {
   };
 
   // Poll every minute (60000 ms)
-  setInterval(pollData, 5000);
+  setInterval(pollData, 60000);
 }
 module.exports = {
   pollAnnouncements,
