@@ -37,10 +37,6 @@ async function pollAnnouncements(db, requestOptions, client) {
         //filter for new announcements, comparing them with DB stored announcements
         const newAnnouncements = announcements.filter((ann) => !postedIds.includes(ann.id));
 
-        //get the name of the course
-        const course_name = await announcementHandler.fetchCourseNameById(course.course_id, db);
-        console.log(course_name);
-
         //if new announcements are found, post them in channel and save to DB
         if (newAnnouncements.length) {
           await sendMessage.postAnnouncementsAndSave(
@@ -48,8 +44,7 @@ async function pollAnnouncements(db, requestOptions, client) {
             newAnnouncements,
             process.env.ANNOUNCEMENT_CHANNEL_ID,
             db,
-            course.course_id,
-            course_name
+            course.course_id
           );
           console.log("New announcements found for course", course.course_id);
         } else {
