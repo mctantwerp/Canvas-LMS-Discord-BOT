@@ -15,14 +15,6 @@ async function test(apiData){
     const currentDay = currentDate.split(/[-T]/)[2];
     const currentMonth = currentDate.split(/[-T]/)[1];
     const currentYear = currentDate.split(/[-T]/)[0];
-    if(currentDate < date){
-        console.log("this date is earlier then the task");
-        console.log(`the current date is ${currentDay} ${currentMonth} ${currentYear}`);
-        console.log(`the task date is ${day} ${month} ${year}`);
-    }
-    else{
-        console.log("this date is later then the task");
-    }
 
     if(year === currentYear && month === currentMonth && day-1 === currentDay){
         console.log("REMINDER!!!!!!!!!!!!!!!");
@@ -32,20 +24,27 @@ async function test(apiData){
 }
 
 async function sendReminder(apiData){
-        const date = apiData.due_at;
-        const day = date.split(/[-T]/)[2];
-        const month = date.split(/[-T]/)[1];
-        const year = date.split(/[-T]/)[0];
+    const date = apiData.due_at;
+    const day = date.split(/[-T]/)[2];
+    const month = date.split(/[-T]/)[1];
+    const year = date.split(/[-T]/)[0];
 
-        const currentDate = new Date().toISOString();
-        const currentDay = currentDate.split(/[-T]/)[2];
-        const currentMonth = currentDate.split(/[-T]/)[1];
-        const currentYear = currentDate.split(/[-T]/)[0];
+    const currentDate = new Date().toISOString();
+    const currentDay = currentDate.split(/[-T]/)[2];
+    const currentMonth = currentDate.split(/[-T]/)[1];
+    const currentYear = currentDate.split(/[-T]/)[0];
 
-        if(year === currentYear && month === currentMonth && day-1 === currentDay){
-            return apiData.description;
-        }
+    var assigmentDate = new Date(date);
+    var dayBeforeAssingment = new Date();
+    dayBeforeAssingment.setDate(assigmentDate.getDate() - 1);
+    dayBeforeAssingment = dayBeforeAssingment.toISOString().split(/[-T]/)[2];
+
+    if(year === currentYear && month === currentMonth && dayBeforeAssingment === currentDay){
+        return apiData.description;
+    }
+
 }
+
 
 module.exports = {
     test,
