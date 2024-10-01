@@ -2,7 +2,7 @@ const mysql = require('mysql2');
 
 //handling the data
 function announcementHTMLtoText(data, client) {
-        //function to convert html to string, but with an array as input
+    //function to convert html to string, but with an array as input
     if (data.length === 0) {
         return;
     }
@@ -33,7 +33,7 @@ function announcementHTMLtoTextString(data) {
         startMessage = startMessage.replace("&nbsp;", "");
     }
     endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
-    return "```" + endMessage + "```";
+    return endMessage;
 }
 
 

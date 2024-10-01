@@ -2,13 +2,13 @@ const announcementHandler = require("./announcementHandler.js");
 const helperFunctions = require("./helperFunctions.js");
 
 async function sendMessageToChannel(client, message, channel_id) {
-  if(message === undefined){
+  if (message === undefined) {
     return;
   }
-  if(message === null){
+  if (message === null) {
     return;
   }
-  if(message === ""){
+  if (message === "") {
     return;
   }
   //wait for promise to be resolved
@@ -25,8 +25,8 @@ async function postAnnouncementsAndSave(client, announcements, channel_id, db, c
       announcement.message
     );
     //send it to the channel and log in console
-    await channel.send(announcementHTMLtoText);
-    //save it in DB
+    await channel.send(
+      `**Title:** ${announcement.title}\n**Description:** ${announcementHTMLtoText}\n**Posted by:** ${announcement.author.display_name}`);
     await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText, course_id);
   }
 }
