@@ -27,7 +27,7 @@ client.on("ready", async () => {
   const db = await require("./initDB.js").createDbConnection();
 
 
-  const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49719/assignments";
+  const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49722/assignments";
   const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.basic, client);
   await apiData.forEach(async(element) => {
     const reminderData = await reminderController.sendReminder(element);

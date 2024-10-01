@@ -40,7 +40,7 @@ async function sendReminder(apiData){
     dayBeforeAssingment = dayBeforeAssingment.toISOString().split(/[-T]/)[2];
 
     if(year === currentYear && month === currentMonth && dayBeforeAssingment === currentDay){
-        return apiData.description;
+        return "Title: " + apiData.name + "\ndescription: " + apiData.description;
     }
 
 }
