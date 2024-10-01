@@ -21,7 +21,6 @@ async function pollAnnouncements(db, requestOptions, client) {
     try {
       //get currently enlisted courses from DB
       const courses = await courseHandler.getAllCourses(db);
-      console.log("Courses fetched from DB:", courses);
 
       //loop through each course and fetch announcements
       for (const course of courses) {
@@ -38,14 +37,19 @@ async function pollAnnouncements(db, requestOptions, client) {
         //filter for new announcements, comparing them with DB stored announcements
         const newAnnouncements = announcements.filter((ann) => !postedIds.includes(ann.id));
 
+        //get the name of the course
+        const course_name = await announcementHandler.fetchCourseNameById(course.course_id, db);
+        console.log(course_name);
+
         //if new announcements are found, post them in channel and save to DB
         if (newAnnouncements.length) {
           await sendMessage.postAnnouncementsAndSave(
             client,
             newAnnouncements,
-            process.env.ANNOUNCEMENT_CHANNEL_ID, // Replace with your channel ID
+            process.env.ANNOUNCEMENT_CHANNEL_ID,
             db,
-            course.course_id
+            course.course_id,
+            course_name
           );
           console.log("New announcements found for course", course.course_id);
         } else {

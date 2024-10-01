@@ -16,7 +16,7 @@ async function sendMessageToChannel(client, message, channel_id) {
   channel.send(message);
 }
 
-async function postAnnouncementsAndSave(client, announcements, channel_id, db, course_id) {
+async function postAnnouncementsAndSave(client, announcements, channel_id, db, course_id, course_name) {
   //wait for promise to be resolved
   const channel = await client.channels.fetch(channel_id);
   for (const announcement of announcements) {
@@ -25,7 +25,7 @@ async function postAnnouncementsAndSave(client, announcements, channel_id, db, c
       announcement.message
     );
     //send it to the channel and log in console
-    await channel.send(`\`\`\`Title: ${announcement.title}\n\nDescription: ${announcementHTMLtoText}\n\nPosted by: ${announcement.author.display_name}\`\`\``);
+    await channel.send(`\`\`\`Title: ${announcement.title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement.author.display_name}\`\`\``);
     await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText, course_id);
   }
 }
