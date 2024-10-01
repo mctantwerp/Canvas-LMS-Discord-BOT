@@ -30,23 +30,24 @@ client.on("ready", async () => {
 
 
   const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49719/assignments";
-  const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.basic, client);
+  const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.getLatestAnnouncementCall, client);
+  // console.log(helperFunctions.announcementHTMLtoText(apiData));
+  // pusherFunctions.sendDataToPi(apiData);
+
+
   await apiData.forEach(async(element) => {
     const reminderData = await reminderController.sendReminder(element);
     const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
     sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");    
+    console.log(reminderMessage);
   });
-  
 
   //generate course table information for all enrolled courses.
   await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
   //poll for announcements
   pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
-
   apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
-
-
 });
 
 //when the bot receives a message, it will respond with "pong"

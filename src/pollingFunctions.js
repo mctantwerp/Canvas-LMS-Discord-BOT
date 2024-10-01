@@ -33,6 +33,7 @@ async function pollAnnouncements(db, requestOptions, client) {
 
         // Filter for new announcements, comparing them with DB stored announcements
         const newAnnouncements = announcements.filter((ann) => !postedIds.includes(ann.id));
+        console.log(newAnnouncements);
 
         // If new announcements are found, post them in channel and save to DB
         if (newAnnouncements.length) {
