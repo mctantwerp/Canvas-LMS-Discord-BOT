@@ -14,7 +14,7 @@ async function getAllCourses(db) {
     const [courses] = await db.query("SELECT * FROM courses");
     return courses;
   } catch (error) {
-    //console.log("Error fetching the courses from database");
+    console.log("Error fetching the courses from database");
   }
 }
 

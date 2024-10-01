@@ -29,18 +29,21 @@ client.on("ready", async () => {
 
   const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49719/assignments";
   const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.basic, client);
-  await apiData.forEach(async(element) => {
+  await apiData.forEach(async (element) => {
     const reminderData = await reminderController.sendReminder(element);
     const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
-    sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");    
+    sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
   });
-  
+
 
   //generate course table information for all enrolled courses.
-  await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
+  //you can see we use requestOptions.getEnrolledCourses to get the enrolled courses, this is defined in requestOptions.js
+  //we do this because canvas (if u fetch all courses of your account), will return all courses, including the ones you are not enrolled in anymore (e.g. first year courses)
+  //this way we only get the courses you are currently enrolled in
+  //await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
   //poll for announcements
-  //pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
+  pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
 
   apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
 
