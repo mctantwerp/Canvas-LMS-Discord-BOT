@@ -1,8 +1,9 @@
 async function saveCoursesToDB(courses, db, courseURL) {
   try {
-    await db.query("INSERT INTO courses (course_id, api_url) VALUES (?, ?)", [
+    await db.query("INSERT INTO courses (course_id, api_url, name) VALUES (?, ?, ?)", [
       courses.id,
       courseURL,
+      courses.name,
     ]);
   } catch (error) {
     //console.log("Error saving courses to database. If courses are already in DB, ignore error.");
