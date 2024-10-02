@@ -19,7 +19,18 @@ async function getAllCourses(db) {
   }
 }
 
+async function getCourseIds(db) {
+  try {
+    const [ids] = await db.query("SELECT course_id FROM courses");
+    return ids;
+  } catch (error) {
+    console.log("Error fetching the courses from database");
+  }
+}
+
+
 module.exports = {
   saveCoursesToDB,
   getAllCourses,
+  getCourseIds,
 };

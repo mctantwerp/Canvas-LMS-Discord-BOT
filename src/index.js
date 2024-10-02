@@ -6,6 +6,7 @@ const apiUrlGenerator = require("./apiUrlGenerator.js");
 const courseHandler = require("./courseHandler.js");
 const pollingFunctions = require("./pollingFunctions.js");
 const reminderController = require("./reminder.js");
+const slashDeploy = require("./slash-deploy.js");
 
 const axios = require('axios');
 
@@ -15,12 +16,7 @@ require("dotenv").config();
 const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
 const requestOptions = require("./requestOptions.js");
-
-
-//global variable for database
 var db;
-
-
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
   console.log(`Bot is online.`);
@@ -54,7 +50,8 @@ client.on("ready", async () => {
       await delay(5000);
     }
   }
-  runSequentialPolling();
+  //runSequentialPolling();
+  slashDeploy.slashRegister(db);
 
 
 });
@@ -76,36 +73,67 @@ client.on("messageCreate", (message) => {
 client.on("interactionCreate", async (interaction) => {
   //command to get latest announcemenet
   if (interaction.isCommand()) {
+    // try {
+    //   if (interaction.commandName === "get_latest_announcement") {
+
+    //     // //save userinput --> ONLY IF USING USER INPUT FOR GET LATEST ANNOUNCEMENTS
+
+    //     // const course_id = interaction.options.getInteger("course");
+    //     // if (course_id <= 0) {
+    //     //   return interaction.reply("Please enter a valid course ID.");
+
+    //     // }
+
+    //     //create course api url
+    //     const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course_id}&per_page=1`;
+
+    //     //use this api url for fetching announcements
+    //     const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
+    //     if (!announcement || announcement.length === 0) {
+    //       return interaction.reply(`No announcements found for course_id: ${course_id}`);
+    //     }
+
+    //     //transform announcement HTML to text
+    //     const announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
+
+    //     //get course name based on user inputted ID
+    //     const course_name = await announcementHandler.fetchCourseNameById(course_id, db);
+
+    //     //reply to user
+    //     interaction.reply(`\`\`\`Title: ${announcement[0].title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement[0].user_name}\`\`\``);
+    //   }
+    // } catch (error) {
+    //   interaction.reply("An error occured.");
+    //   console.log(error);
+    // }
+
+
+
+
     try {
+
       if (interaction.commandName === "get_latest_announcement") {
 
-        //save userinput
-        const course_id = interaction.options.getInteger("course_id");
-        if (course_id <= 0) {
-          return interaction.reply("Please enter a valid course ID.");
-
-        }
-
-        //create course api url
-        const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course_id}&per_page=1`;
-
-        //use this api url for fetching announcements
+        //get user input, in this case, an ID of course returns
+        var userInput = interaction.options.getString("course_name");
+        //convert to int
+        userInput = Number(userInput);
+        //check if user input is valid
+        const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${userInput}&per_page=1`;
         const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
+        const course_name = await announcementHandler.getCourseNameById(userInput, db);
+
         if (!announcement || announcement.length === 0) {
-          return interaction.reply(`No announcements found for course ${course_id}`);
+          return interaction.reply(`No announcements found for ${course_name}`);
         }
 
         //transform announcement HTML to text
         const announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
 
-        //get course name based on user inputted ID
-        const course_name = await announcementHandler.fetchCourseNameById(course_id, db);
-
         //reply to user
         interaction.reply(`\`\`\`Title: ${announcement[0].title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement[0].user_name}\`\`\``);
       }
     } catch (error) {
-      interaction.reply("An error occured.");
       console.log(error);
     }
   }
