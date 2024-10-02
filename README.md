@@ -19,8 +19,8 @@ after that copy the generated url at the bottom of the screen and open it in a n
 4. then go to ... and generate your canvas api token (CANVAS_API=)
 5. after that change the `CANVAS_COURSES_URL=` and `CANVAS_BASE_URL=` to your institute
 6. then fill in all your database info
-   `DB_HOST=""
-    DB_USER=""
-    DB_PASSWORD=""
-    DB_NAME=""`
+   -`DB_HOST=""`
+   -`DB_USER=""`
+   -`DB_PASSWORD=""`
+   -`DB_NAME=""`
 
