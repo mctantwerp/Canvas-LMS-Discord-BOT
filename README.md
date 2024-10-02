@@ -1,6 +1,8 @@
 # ninjas2425-CanvasBot
 
 ## Welcome to our guide to set up your own Canvas discord bot!
+This bot is meant to gather all new announcements from your canvas courses and post them in a certain discord channel.
+This bot will also send reminders in the set discord channels for any assignments that teachers create.
 
 ## Setup:
 
@@ -23,4 +25,8 @@ after that copy the generated url at the bottom of the screen and open it in a n
 - `DB_USER=""`
 - `DB_PASSWORD=""`
 - `DB_NAME=""`
+
+### Step 3: set up your database
+in the repo you can find a discordbot_setupdb.sql file you can run these query's to create the right database
+then you can use /addChannelWithCourse `Course_id` `Channel_id` `ChannelName`
 
