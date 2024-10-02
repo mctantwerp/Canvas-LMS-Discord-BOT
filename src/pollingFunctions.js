@@ -4,6 +4,7 @@ const API = require("./APICalls.js");
 const announcementHandler = require("./announcementHandler.js");
 const sendMessage = require("./sendMessageChannel.js");
 const reminderController = require("./reminder.js");
+const helperFunctions = require("./helperFunctions.js");
 require("dotenv").config();
 
 async function pollAnnouncements(db, requestOptions, client) {
@@ -61,38 +62,44 @@ async function pollAnnouncements(db, requestOptions, client) {
 }
 
 async function pollAssignments(db, requestOptions, client) {
-  //bool to check if still polling
+  // Bool to check if still polling
   let isPolling = false;
 
-  //if still polling, return
+  // If still polling, return
   if (isPolling) {
     console.log("still polling assignments...");
     return;
   }
 
-  //set polling to true
+  // Set polling to true
   isPolling = true;
 
   try {
-    //get currently enlisted courses from db
+    // Get currently enlisted courses from the database
     const courses = await courseHandler.getAllCourses(db);
 
-    //loop through each course and fetch assignments
+    // Loop through each course and fetch assignments
     for (const course of courses) {
-
-      //create assignment api url
+      // Create assignment API URL
       const assignmentApiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course.course_id}/assignments?bucket=upcoming`;
 
-      //use this api url for fetching assignments
+      // Fetch assignments using the API
       const assignments = await API.regularCanvasAPICall(assignmentApiUrl, requestOptions, client);
 
-      //get the posted assignment IDs from the database
+      // Get the posted assignment IDs from the database
       const postedIds = await assignmentsHandler.getPostedAssignments(db);
 
-      //filter for new assignments, comparing them with db stored assignments
+      // Filter for new assignments by comparing them with db stored assignments
       const newAssignments = assignments.filter((assignment) => !postedIds.includes(assignment.id));
 
-      //if new assignments are found, post them in channel and save to db
+      // For each new assignment, send a reminder if needed
+      for (const element of assignments) {
+        const reminderData = await reminderController.sendReminder(element);
+        const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
+        await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
+      }
+
+      // If new assignments are found, post them in the channel and save to the database
       if (newAssignments.length) {
         await sendMessage.postAssignmentAndSave(
           client,
@@ -109,10 +116,11 @@ async function pollAssignments(db, requestOptions, client) {
   } catch (error) {
     console.log("error polling assignments:", error);
   } finally {
-    //reset polling bool because function is done
+    // Reset polling bool because function is done
     isPolling = false;
   }
 }
+
 
 
 

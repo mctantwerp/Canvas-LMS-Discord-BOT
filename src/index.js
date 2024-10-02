@@ -30,14 +30,15 @@ client.on("ready", async () => {
 
 
   // //make api call to get the upcoming assignments by using requestOptions.getUpcomingAssignments
-  // var data = await API.axiosCanvasAPICall("https://canvas.kdg.be/api/v1/courses/49722/assignments", requestOptions.getUpcomingAssignments, client);
-  // //foreach assignment, send a reminder if needed
-  // await data.forEach(async (element) => {
-  //   const reminderData = await reminderController.sendReminder(element);
-  //   const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
-  //   console.log(reminderMessage);
-  //   sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
-  // });
+  var data = await API.axiosCanvasAPICall("https://canvas.kdg.be/api/v1/courses/49722/assignments", requestOptions.getUpcomingAssignments, client);
+  //foreach assignment, send a reminder if needed
+  for (var element of data) {
+    console.log(element.due_at);
+    const reminderData = await reminderController.sendReminder(element);
+    console.log(reminderData);
+    const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
+    await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
+  };
 
 
   //generate course table information for all enrolled courses.
