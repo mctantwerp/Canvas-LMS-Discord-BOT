@@ -44,11 +44,12 @@ client.on("ready", async () => {
   //you can see we use requestOptions.getEnrolledCourses to get the enrolled courses, this is defined in requestOptions.js
   //we do this because canvas (if u fetch all courses of your account), will return all courses, including the ones you are not enrolled in anymore (e.g. first year courses)
   //this way we only get the courses you are currently enrolled in
-  //await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
+  await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
-  //save the assignments to the database
-  //await apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
+
+  //function to add delay
   function delay(ms) {
+    //promise that resolves after specific milliseconds, this way we avoid the two polling functions interfering with each other. this could lead to some returns being null etc
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
