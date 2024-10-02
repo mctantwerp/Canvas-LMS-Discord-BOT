@@ -16,5 +16,11 @@ after that copy the generated url at the bottom of the screen and open it in a n
 1. run `npm install`
 2. create .env file (copy the example file)
 3. go back to your discord application, go the bot --> reset token --> this is the DISCORD_TOKEN= in your .env
-4. 
+4. then go to ... and generate your canvas api token (CANVAS_API=)
+5. after that change the `CANVAS_COURSES_URL=` and `CANVAS_BASE_URL=` to your institute
+6. then fill in all your database info
+   `DB_HOST=""
+    DB_USER=""
+    DB_PASSWORD=""
+    DB_NAME=""`
 
