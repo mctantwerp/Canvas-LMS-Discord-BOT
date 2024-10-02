@@ -4,25 +4,6 @@
     reminderController.test(apiData)
   */
 
-async function test(apiData){
-    const date = apiData[2].due_at;
-    const day = date.split(/[-T]/)[2];
-    const month = date.split(/[-T]/)[1];
-    const year = date.split(/[-T]/)[0];
-
-    const currentDate = new Date().toISOString();
-    console.log(currentDate);
-    const currentDay = currentDate.split(/[-T]/)[2];
-    const currentMonth = currentDate.split(/[-T]/)[1];
-    const currentYear = currentDate.split(/[-T]/)[0];
-
-    if(year === currentYear && month === currentMonth && day-1 === currentDay){
-        console.log("REMINDER!!!!!!!!!!!!!!!");
-    }else{
-        console.log("Ge hebt nog tijd");
-    }
-}
-
 async function sendReminder(apiData){
     const date = apiData.due_at;
     const day = date.split(/[-T]/)[2];
@@ -39,7 +20,21 @@ async function sendReminder(apiData){
     dayBeforeAssingment.setDate(assigmentDate.getDate() - 1);
     dayBeforeAssingment = dayBeforeAssingment.toISOString().split(/[-T]/)[2];
 
+    var threeDaysBeforeAssingment = new Date();
+    threeDaysBeforeAssingment.setDate(assigmentDate.getDate() - 3);
+    threeDaysBeforeAssingment = threeDaysBeforeAssingment.toISOString().split(/[-T]/)[2];
+
+    var weekBeforeAssignment = new Date();
+    weekBeforeAssignment.setDate(assigmentDate.getDate() - 7);
+    weekBeforeAssignment = weekBeforeAssignment.toISOString().split(/[-T]/)[2];
+
     if(year === currentYear && month === currentMonth && dayBeforeAssingment === currentDay){
+        return "Title: " + apiData.name + "\ndescription: " + apiData.description;
+    }
+    else if(year === currentYear && month === currentMonth && threeDaysBeforeAssingment === currentDay){
+        return "Title: " + apiData.name + "\ndescription: " + apiData.description;
+    }
+    else if(year === currentYear && month === currentMonth && weekBeforeAssignment === currentDay){
         return "Title: " + apiData.name + "\ndescription: " + apiData.description;
     }
 
@@ -47,6 +42,5 @@ async function sendReminder(apiData){
 
 
 module.exports = {
-    test,
     sendReminder,
 }
