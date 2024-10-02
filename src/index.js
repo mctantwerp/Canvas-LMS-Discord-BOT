@@ -7,6 +7,8 @@ const courseHandler = require("./courseHandler.js");
 const pollingFunctions = require("./pollingFunctions.js");
 const reminderController = require("./reminder.js");
 
+const axios = require('axios');
+
 //we use env file for secret tokens
 require("dotenv").config();
 
@@ -27,11 +29,13 @@ client.on("ready", async () => {
   const db = await require("./initDB.js").createDbConnection();
 
 
-  // const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49719/assignments";
-  // const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.basic, client);
-  // await apiData.forEach(async (element) => {
+  // //make api call to get the upcoming assignments by using requestOptions.getUpcomingAssignments
+  // var data = await API.axiosCanvasAPICall("https://canvas.kdg.be/api/v1/courses/49722/assignments", requestOptions.getUpcomingAssignments, client);
+  // //foreach assignment, send a reminder if needed
+  // await data.forEach(async (element) => {
   //   const reminderData = await reminderController.sendReminder(element);
   //   const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
+  //   console.log(reminderMessage);
   //   sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
   // });
 
@@ -42,10 +46,21 @@ client.on("ready", async () => {
   //this way we only get the courses you are currently enrolled in
   //await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
-  //poll for announcements
-  pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
+  //save the assignments to the database
+  //await apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-  //apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
+
+  async function runSequentialPolling() {
+    await pollingFunctions.pollAnnouncements(db, requestOptions.basic, client);
+    await delay(5000);
+    await pollingFunctions.pollAssignments(db, requestOptions.basic, client);
+    await delay(5000);
+  }
+  runSequentialPolling();
+
 
 });
 
