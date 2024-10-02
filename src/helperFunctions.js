@@ -33,7 +33,7 @@ function announcementHTMLtoTextString(data) {
         startMessage = startMessage.replace("&nbsp;", "");
     }
     endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
-    return endMessage;
+    return "```js\n" + endMessage + "```";
 }
 
 

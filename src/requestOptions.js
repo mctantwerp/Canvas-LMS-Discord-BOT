@@ -1,5 +1,4 @@
 const apiKey = process.env.CANVAS_API;
-const samApiKey = process.env.SAM_API_KEY;
 
 
 const basic = {
