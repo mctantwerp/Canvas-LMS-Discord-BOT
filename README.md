@@ -10,8 +10,9 @@ This bot will also send reminders in the set discord channels for any assignment
 see: https://discord.com/developers/docs/intro
 select under OAuth2 -> OAuth2 URL Generator -> bot
 ![image](https://github.com/user-attachments/assets/3214d1f4-81eb-4497-ac98-64eef3c59186)
-then select under bot permissions -> send messages
-![image](https://github.com/user-attachments/assets/96306151-b9a1-4b7b-9407-020ce49c17ac)
+then select under bot permissions -> send messages, view channels, read message history, use slash commands
+![image](https://github.com/user-attachments/assets/c354ae8d-8b4a-4c4e-ac3c-c91d939d2d86)
+
 after that copy the generated url at the bottom of the screen and open it in a new tab, this will give you the option to invite the bot to a certain server.
 
 ### Step 2: clone the repository on your server
