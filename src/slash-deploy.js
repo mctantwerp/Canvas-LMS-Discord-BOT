@@ -12,7 +12,9 @@ const slashRegister = async () => {
     try {
         await rest.put(Routes.applicationGuildCommands(botID, serverID), {
             body: [
-                new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
+                new SlashCommandBuilder().setName('get_latest_announcement').setDescription('Get the latest announcement of a specific course!').addIntegerOption(option => {
+                    return option.setName("course_id").setDescription("The ID of course, usually found in the URL in canvas").setRequired(true);
+                }),
             ]
         });
     } catch (error) {

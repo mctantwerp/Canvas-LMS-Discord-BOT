@@ -16,17 +16,16 @@ const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
 const requestOptions = require("./requestOptions.js");
 
-//Api urls
-const apiUrl = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49719";
-const apiUrl2 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_9656&per_page=1";
-const apiUrl3 = "https://canvas.kdg.be/api/v1/announcements?context_codes[]=course_49715";
-//OR --> see function below
+
+//global variable for database
+var db;
+
 
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
   console.log(`Bot is online.`);
   //make connection to database
-  const db = await require("./initDB.js").createDbConnection();
+  db = await require("./initDB.js").createDbConnection();
 
 
   // // //make api call to get the upcoming assignments by using requestOptions.getUpcomingAssignments
@@ -75,11 +74,40 @@ client.on("messageCreate", (message) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
+  //command to get latest announcemenet
   if (interaction.isCommand()) {
-    if (interaction.commandName === "ping") {
+    try {
+      if (interaction.commandName === "get_latest_announcement") {
 
+        //save userinput
+        const course_id = interaction.options.getInteger("course_id");
+        if (course_id <= 0) {
+          return interaction.reply("Please enter a valid course ID.");
+
+        }
+
+        //create course api url
+        const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course_id}&per_page=1`;
+
+        //use this api url for fetching announcements
+        const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
+        if (!announcement || announcement.length === 0) {
+          return interaction.reply(`No announcements found for course ${course_id}`);
+        }
+
+        //transform announcement HTML to text
+        const announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
+
+        //get course name based on user inputted ID
+        const course_name = await announcementHandler.fetchCourseNameById(course_id, db);
+
+        //reply to user
+        interaction.reply(`\`\`\`Title: ${announcement[0].title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement[0].user_name}\`\`\``);
+      }
+    } catch (error) {
+      interaction.reply("An error occured.");
+      console.log(error);
     }
-
   }
 });
 
