@@ -1,3 +1,4 @@
+const { default: axios } = require('axios');
 const helpers = require('./helperFunctions.js');
 const sendMessage = require("./sendMessageChannel.js");
 
@@ -56,8 +57,25 @@ function pollingCanvasAPICall(apiUrl, requestOptions, interval, client) {
 }
 
 
+//exclusively used to give params with call
+async function axiosCanvasAPICall(url, requestOptions) {
+    try {
+        const response = await axios.get(url,
+            {
+                headers: requestOptions.headers,
+                params: requestOptions.params
+            });
+        return response.data;
+    }
+    catch (error) {
+        console.log("API Call with AXIOS failed.");
+    }
+}
+
+
 module.exports = {
     canvasAPICall,
     regularCanvasAPICall,
-    pollingCanvasAPICall
+    pollingCanvasAPICall,
+    axiosCanvasAPICall
 };

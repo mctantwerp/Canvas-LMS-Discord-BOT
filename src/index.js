@@ -7,6 +7,8 @@ const courseHandler = require("./courseHandler.js");
 const pollingFunctions = require("./pollingFunctions.js");
 const reminderController = require("./reminder.js");
 
+const axios = require('axios');
+
 //we use env file for secret tokens
 require("dotenv").config();
 
@@ -27,22 +29,33 @@ client.on("ready", async () => {
   const db = await require("./initDB.js").createDbConnection();
 
 
-  const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49722/assignments";
-  const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.basic, client);
-  await apiData.forEach(async(element) => {
-    const reminderData = await reminderController.sendReminder(element);
-    const reminderMessage = helperFunctions.announcementHTMLtoTextString(reminderData);
-    sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");    
-  });
-  
+  // // //make api call to get the upcoming assignments by using requestOptions.getUpcomingAssignments
+  //var data = await API.axiosCanvasAPICall("https://canvas.kdg.be/api/v1/courses/49722/assignments", requestOptions.getUpcomingAssignments, client);
+
 
   //generate course table information for all enrolled courses.
+  //you can see we use requestOptions.getEnrolledCourses to get the enrolled courses, this is defined in requestOptions.js
+  //we do this because canvas (if u fetch all courses of your account), will return all courses, including the ones you are not enrolled in anymore (e.g. first year courses)
+  //this way we only get the courses you are currently enrolled in
   await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
-  //poll for announcements
-  //pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
 
-  apiUrlGenerator.saveAssignmentsToDB(client, requestOptions.getUpcomingAssignments, db);
+  //function to add delay
+  function delay(ms) {
+    //promise that resolves after specific milliseconds, this way we avoid the two polling functions interfering with each other. this could lead to some returns being null etc
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+
+  async function runSequentialPolling() {
+    while (true) {
+      await pollingFunctions.pollAnnouncements(db, requestOptions.basic, client);
+      await delay(5000);
+      await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
+      await delay(5000);
+    }
+  }
+  runSequentialPolling();
 
 
 });
