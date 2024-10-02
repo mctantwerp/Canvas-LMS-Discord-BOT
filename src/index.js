@@ -29,16 +29,8 @@ client.on("ready", async () => {
   const db = await require("./initDB.js").createDbConnection();
 
 
-  // //make api call to get the upcoming assignments by using requestOptions.getUpcomingAssignments
-  var data = await API.axiosCanvasAPICall("https://canvas.kdg.be/api/v1/courses/49722/assignments", requestOptions.getUpcomingAssignments, client);
-  //foreach assignment, send a reminder if needed
-  for (var element of data) {
-    console.log(element.due_at);
-    const reminderData = await reminderController.sendReminder(element);
-    console.log(reminderData);
-    const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
-    await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
-  };
+  // // //make api call to get the upcoming assignments by using requestOptions.getUpcomingAssignments
+  //var data = await API.axiosCanvasAPICall("https://canvas.kdg.be/api/v1/courses/49722/assignments", requestOptions.getUpcomingAssignments, client);
 
 
   //generate course table information for all enrolled courses.
@@ -58,7 +50,7 @@ client.on("ready", async () => {
   async function runSequentialPolling() {
     await pollingFunctions.pollAnnouncements(db, requestOptions.basic, client);
     await delay(5000);
-    await pollingFunctions.pollAssignments(db, requestOptions.basic, client);
+    await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
     await delay(5000);
   }
   runSequentialPolling();

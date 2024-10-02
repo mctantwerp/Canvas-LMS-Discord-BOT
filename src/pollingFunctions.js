@@ -62,44 +62,46 @@ async function pollAnnouncements(db, requestOptions, client) {
 }
 
 async function pollAssignments(db, requestOptions, client) {
-  // Bool to check if still polling
+  //bool to check if still polling
   let isPolling = false;
 
-  // If still polling, return
+  //if still polling, return
   if (isPolling) {
     console.log("still polling assignments...");
     return;
   }
 
-  // Set polling to true
+  //set polling to true
   isPolling = true;
 
   try {
-    // Get currently enlisted courses from the database
+    //get currently enlisted courses from the database
     const courses = await courseHandler.getAllCourses(db);
 
-    // Loop through each course and fetch assignments
+    //loop through each course and fetch assignments
     for (const course of courses) {
-      // Create assignment API URL
+      //create assignment API URL
       const assignmentApiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course.course_id}/assignments?bucket=upcoming`;
 
-      // Fetch assignments using the API
+      //fetch assignments using the API
       const assignments = await API.regularCanvasAPICall(assignmentApiUrl, requestOptions, client);
 
-      // Get the posted assignment IDs from the database
+      //get the posted assignment IDs from the database
       const postedIds = await assignmentsHandler.getPostedAssignments(db);
 
-      // Filter for new assignments by comparing them with db stored assignments
+      //filter for new assignments by comparing them with db stored assignments
       const newAssignments = assignments.filter((assignment) => !postedIds.includes(assignment.id));
 
-      // For each new assignment, send a reminder if needed
-      for (const element of assignments) {
+      //for each new assignment, send a reminder if needed
+      for (const element of data) {
         const reminderData = await reminderController.sendReminder(element);
-        const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
-        await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
+        //if reminderData exists, send the reminder to the channel
+        if (reminderData) {
+          const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
+          await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
+        }
       }
-
-      // If new assignments are found, post them in the channel and save to the database
+      //if new assignments are found, post them in the channel and save to the database
       if (newAssignments.length) {
         await sendMessage.postAssignmentAndSave(
           client,
@@ -116,7 +118,7 @@ async function pollAssignments(db, requestOptions, client) {
   } catch (error) {
     console.log("error polling assignments:", error);
   } finally {
-    // Reset polling bool because function is done
+    //reset polling bool because function is done
     isPolling = false;
   }
 }
