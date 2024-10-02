@@ -48,10 +48,12 @@ client.on("ready", async () => {
 
 
   async function runSequentialPolling() {
-    await pollingFunctions.pollAnnouncements(db, requestOptions.basic, client);
-    await delay(5000);
-    await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
-    await delay(5000);
+    while (true) {
+      await pollingFunctions.pollAnnouncements(db, requestOptions.basic, client);
+      await delay(5000);
+      await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
+      await delay(5000);
+    }
   }
   runSequentialPolling();
 

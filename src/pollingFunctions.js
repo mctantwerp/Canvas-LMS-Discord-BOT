@@ -93,7 +93,7 @@ async function pollAssignments(db, requestOptions, client) {
       const newAssignments = assignments.filter((assignment) => !postedIds.includes(assignment.id));
 
       //for each new assignment, send a reminder if needed
-      for (const element of data) {
+      for (const element of assignments) {
         const reminderData = await reminderController.sendReminder(element);
         //if reminderData exists, send the reminder to the channel
         if (reminderData) {
