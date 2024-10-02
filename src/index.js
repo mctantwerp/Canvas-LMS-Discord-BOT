@@ -74,6 +74,15 @@ client.on("messageCreate", (message) => {
   }
 });
 
+client.on("interactionCreate", async (interaction) => {
+  if (interaction.isCommand()) {
+    if (interaction.commandName === "ping") {
+
+    }
+
+  }
+});
+
 module.exports = {
   client,
 };
