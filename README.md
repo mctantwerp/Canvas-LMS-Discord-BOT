@@ -13,5 +13,8 @@ then select under bot permissions -> send messages
 after that copy the generated url at the bottom of the screen and open it in a new tab, this will give you the option to invite the bot to a certain server.
 
 ### Step 2: clone the repository on your server
-
+1. run `npm install`
+2. create .env file (copy the example file)
+3. go back to your discord application, go the bot --> reset token --> this is the DISCORD_TOKEN= in your .env
+4. 
 
