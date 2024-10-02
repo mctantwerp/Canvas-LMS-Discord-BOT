@@ -5,8 +5,16 @@
   */
 
 async function sendReminder(apiData){
+    if(apiData === null){
+        return;
+    }
+    if(apiData === undefined){
+        return;
+    }
+    if(apiData.due_at === null){
+        return ;
+    }
     const date = apiData.due_at;
-    const day = date.split(/[-T]/)[2];
     const month = date.split(/[-T]/)[1];
     const year = date.split(/[-T]/)[0];
 
@@ -27,6 +35,8 @@ async function sendReminder(apiData){
     var weekBeforeAssignment = new Date();
     weekBeforeAssignment.setDate(assigmentDate.getDate() - 7);
     weekBeforeAssignment = weekBeforeAssignment.toISOString().split(/[-T]/)[2];
+
+
 
     if(year === currentYear && month === currentMonth && dayBeforeAssingment === currentDay){
         return "Title: " + apiData.name + "\ndescription: " + apiData.description;

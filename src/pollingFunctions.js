@@ -81,7 +81,7 @@ async function pollAssignments(db, requestOptions, client) {
     //loop through each course and fetch assignments
     for (const course of courses) {
       //create assignment API URL
-      const assignmentApiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course.course_id}/assignments?bucket=upcoming`;
+      const assignmentApiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course.course_id}/assignments?bucket=future`;
 
       //fetch assignments using the API
       const assignments = await API.regularCanvasAPICall(assignmentApiUrl, requestOptions, client);
