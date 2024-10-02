@@ -5,6 +5,7 @@ const announcementHandler = require("./announcementHandler.js");
 const sendMessage = require("./sendMessageChannel.js");
 const reminderController = require("./reminder.js");
 const helperFunctions = require("./helperFunctions.js");
+const { normalizeArray } = require("discord.js");
 require("dotenv").config();
 
 async function pollAnnouncements(db, requestOptions, client) {
@@ -74,6 +75,8 @@ async function pollAssignments(db, requestOptions, client) {
   //set polling to true
   isPolling = true;
 
+  var currentDate = new Date();
+
   try {
     //get currently enlisted courses from the database
     const courses = await courseHandler.getAllCourses(db);
@@ -86,14 +89,20 @@ async function pollAssignments(db, requestOptions, client) {
       //fetch assignments using the API
       const assignments = await API.regularCanvasAPICall(assignmentApiUrl, requestOptions, client);
 
+      //filter for upcoming assignments only = assignments with due date after current date
+      const upcomingAssignments = assignments.filter(assignment => {
+        const dueDate = new Date(assignment.due_at);
+        return dueDate > currentDate;
+      })
+
       //get the posted assignment IDs from the database
       const postedIds = await assignmentsHandler.getPostedAssignments(db);
 
       //filter for new assignments by comparing them with db stored assignments
-      const newAssignments = assignments.filter((assignment) => !postedIds.includes(assignment.id));
+      const newAssignments = upcomingAssignments.filter((assignment) => !postedIds.includes(assignment.id));
 
       //for each new assignment, send a reminder if needed
-      for (const element of assignments) {
+      for (const element of upcomingAssignments) {
         const reminderData = await reminderController.sendReminder(element);
         //if reminderData exists, send the reminder to the channel
         if (reminderData) {

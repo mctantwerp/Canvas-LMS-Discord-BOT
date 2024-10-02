@@ -42,13 +42,13 @@ async function postAssignmentAndSave(client, assignments, channel_id, db, course
 
   for (const assignment of assignments) {
     //start conversion html to text
-    const assignmentHTMLtoText = helperFunctions.announcementHTMLtoTextString(
+    const assignmentHTMLtoText = helperFunctions.announcementHTMLtoTextONLY(
       assignment.description
     );
     //save in db
     await assignmentHandler.saveAssignment(assignment, db, assignmentHTMLtoText, course_id);
     //get course name
-    var course_name = await announcementHandler.fetchCourseNameById(course_id, db);
+    var course_name = await assignmentHandler.fetchCourseNameById(course_id, db);
     //send it to the channel and log in console
     await channel.send(`\`\`\`Title: ${assignment.name}\n\nDescription: ${assignmentHTMLtoText}\n\nCourse: ${course_name}\`\`\``);
   }

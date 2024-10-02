@@ -35,9 +35,26 @@ function announcementHTMLtoTextString(data) {
     endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
     return "```js\n" + endMessage + "```";
 }
+function announcementHTMLtoTextONLY(data) {
+    if (data === null) {
+        return;
+    }
+    if (data === undefined) {
+        return;
+    }
+    //function to convert html to string
+    var endMessage = "";
+    var startMessage = data.toString();
+    while (startMessage.indexOf("&nbsp;") !== -1) {
+        startMessage = startMessage.replace("&nbsp;", "");
+    }
+    endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
+    return endMessage;
+}
 
 
 module.exports = {
     announcementHTMLtoText,
-    announcementHTMLtoTextString
+    announcementHTMLtoTextString,
+    announcementHTMLtoTextONLY,
 }
