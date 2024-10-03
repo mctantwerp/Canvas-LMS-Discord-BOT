@@ -50,7 +50,7 @@ client.on("ready", async () => {
       await delay(5000);
     }
   }
-  //runSequentialPolling();
+  runSequentialPolling();
   slashDeploy.slashRegister(db);
 
 
@@ -132,6 +132,25 @@ client.on("interactionCreate", async (interaction) => {
 
         //reply to user
         interaction.reply(`\`\`\`Title: ${announcement[0].title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement[0].user_name}\`\`\``);
+      }
+      if (interaction.commandName === "add_channel_to_course") {
+        const courseId = interaction.options.getInteger('course_id');
+        const courseName = interaction.options.getString('course_name');
+        const channelDiscordId = interaction.options.getString('channel_discord_id');
+
+        try {
+
+          //insert the data into the courses table
+          await courseHandler.saveCoursesWithNameAndDiscord(courseId, courseName, channelDiscordId, db);
+
+          //respond to the user
+          await interaction.reply(`Course saved!\nCourse ID: ${courseId}\nCourse Name: ${courseName}\nChannel Discord ID: ${channelDiscordId}`);
+
+        } catch (error) {
+          console.error('Error inserting into database:', error);
+          await interaction.reply('There was an error saving the course. Please try again.');
+        }
+
       }
     } catch (error) {
       console.log(error);

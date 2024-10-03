@@ -51,9 +51,26 @@ const slashRegister = async (db) => {
 
                         return option; // Return the option after adding choices
                     }),
+                new SlashCommandBuilder()
+                    .setName('add_channel_to_course') // Set the command name
+                    .setDescription('Assign a specific channel to a course.') // Set the command description
+                    .addIntegerOption(option =>
+                        option.setName('course_id')
+                            .setDescription('Enter the course ID')
+                            .setRequired(true) // User must input the course ID
+                    )
+                    .addStringOption(option =>
+                        option.setName('course_name')
+                            .setDescription('Enter the course name')
+                            .setRequired(true) // User must input the course name
+                    )
+                    .addStringOption(option =>
+                        option.setName('channel_discord_id')
+                            .setDescription('Enter the Discord channel ID')
+                            .setRequired(true) // User must input the Discord channel ID
+                    ),
             ]
         });
-
         console.log('Commands registered successfully');
     } catch (error) {
         console.log("Error registering commands:", error);

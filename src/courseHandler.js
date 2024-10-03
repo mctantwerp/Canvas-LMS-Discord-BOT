@@ -28,9 +28,24 @@ async function getCourseIds(db) {
   }
 }
 
+async function saveCoursesWithNameAndDiscord(course_id, course_name, course_discordid, db) {
+  try {
+    const [courses] = await db.query('INSERT INTO courses (course_id, name, channeldiscord_id, api_url) VALUES (?, ?, ?, ?)', [
+      course_id,
+      course_name,
+      course_discordid,
+      `courses/${course_id}`
+    ]);
+    return courses;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 module.exports = {
   saveCoursesToDB,
   getAllCourses,
   getCourseIds,
+  saveCoursesWithNameAndDiscord
 };
