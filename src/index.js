@@ -1,5 +1,6 @@
 //we use env file for secret tokens
 require("dotenv").config();
+console.log(process.env.DISCORD_TOKEN);
 const bot = require("./initBot.js");
 const client = bot.initBot();
 const API = require("./APICalls.js");
