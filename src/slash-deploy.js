@@ -12,20 +12,17 @@ const rest = new REST().setToken(botToken);
 
 const slashRegister = async (db) => {
     try {
-
         //get courses from database
         var courses = await courseHandler.getAllCourses(db);
-
         //mapping so it can be used in .addChoices()
         courses = await courses.map(course => ({
-            name: course.name, // This should be a string
-            value: course.course_id.toString(), // Ensure value is a string
+            name: course.name, //will be displayed to user
+            value: course.course_id.toString(), //will be returned value
         }))
 
         await rest.put(Routes.applicationGuildCommands(botID, serverID), {
             body: [
                 //COMMAND TO GET LATEST ANNOUNCEMENT WITH USER INPUT AND SUGGESTIONS
-
                 // new SlashCommandBuilder()
                 //     .setName('get_latest_announcement')
                 //     .setDescription('Get the latest announcement of a specific course!')
@@ -39,7 +36,6 @@ const slashRegister = async (db) => {
                 //     }),
 
                 //COMMAND TO GET LATEST ANNOUNCEMENT WITHOUT USER INPUT, ONLY SUGGESTIONS
-
                 new SlashCommandBuilder()
                     .setName('get_latest_announcement') // Set the command name
                     .setDescription('Get the latest announcement of a specific course!') // Set the command description
@@ -51,6 +47,8 @@ const slashRegister = async (db) => {
 
                         return option; // Return the option after adding choices
                     }),
+
+                //COMMAND TO ADD A CHANNEL TO A COURSE
                 new SlashCommandBuilder()
                     .setName('add_channel_to_course') // Set the command name
                     .setDescription('Assign a specific channel to a course.') // Set the command description

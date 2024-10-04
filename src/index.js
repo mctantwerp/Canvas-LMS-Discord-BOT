@@ -16,6 +16,7 @@ require("dotenv").config();
 const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
 const requestOptions = require("./requestOptions.js");
+const { ChannelType, EmbedBuilder } = require("discord.js");
 var db;
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
@@ -32,7 +33,7 @@ client.on("ready", async () => {
   //you can see we use requestOptions.getEnrolledCourses to get the enrolled courses, this is defined in requestOptions.js
   //we do this because canvas (if u fetch all courses of your account), will return all courses, including the ones you are not enrolled in anymore (e.g. first year courses)
   //this way we only get the courses you are currently enrolled in
-  await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
+  // await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
 
 
   //function to add delay
@@ -40,19 +41,17 @@ client.on("ready", async () => {
     //promise that resolves after specific milliseconds, this way we avoid the two polling functions interfering with each other. this could lead to some returns being null etc
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
-
   async function runSequentialPolling() {
     while (true) {
       await pollingFunctions.pollAnnouncements(db, requestOptions.basic, client);
       await delay(5000);
       await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
       await delay(5000);
+      await slashDeploy.slashRegister(db);
+      await delay(5000);
     }
   }
   runSequentialPolling();
-  slashDeploy.slashRegister(db);
-
 
 });
 
@@ -71,89 +70,123 @@ client.on("messageCreate", (message) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-  //command to get latest announcemenet
+  //is it a command?
   if (interaction.isCommand()) {
-    // try {
-    //   if (interaction.commandName === "get_latest_announcement") {
 
-    //     // //save userinput --> ONLY IF USING USER INPUT FOR GET LATEST ANNOUNCEMENTS
-
-    //     // const course_id = interaction.options.getInteger("course");
-    //     // if (course_id <= 0) {
-    //     //   return interaction.reply("Please enter a valid course ID.");
-
-    //     // }
-
-    //     //create course api url
-    //     const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course_id}&per_page=1`;
-
-    //     //use this api url for fetching announcements
-    //     const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
-    //     if (!announcement || announcement.length === 0) {
-    //       return interaction.reply(`No announcements found for course_id: ${course_id}`);
-    //     }
-
-    //     //transform announcement HTML to text
-    //     const announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
-
-    //     //get course name based on user inputted ID
-    //     const course_name = await announcementHandler.fetchCourseNameById(course_id, db);
-
-    //     //reply to user
-    //     interaction.reply(`\`\`\`Title: ${announcement[0].title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement[0].user_name}\`\`\``);
-    //   }
-    // } catch (error) {
-    //   interaction.reply("An error occured.");
-    //   console.log(error);
-    // }
-
-
-
-
+    //GET LATEST ANNOUNCEMENT
     try {
-
       if (interaction.commandName === "get_latest_announcement") {
 
-        //get user input, in this case, an ID of course returns
-        var userInput = interaction.options.getString("course_name");
-        //convert to int
-        userInput = Number(userInput);
-        //check if user input is valid
-        const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${userInput}&per_page=1`;
-        const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
-        const course_name = await announcementHandler.getCourseNameById(userInput, db);
+        // //save userinput --> ONLY IF USING USER INPUT FOR GET LATEST ANNOUNCEMENTS
+        // const course_id = interaction.options.getInteger("course");
+        // if (course_id <= 0) {
+        //   return interaction.reply("Please enter a valid course ID.");
+        // }
 
+        //create course api url
+        const course_id = interaction.options.getString("course_name");
+        const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course_id}&per_page=1`;
+
+        //use this api url for fetching announcements
+        const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
         if (!announcement || announcement.length === 0) {
-          return interaction.reply(`No announcements found for ${course_name}`);
+          return interaction.reply({
+            content: `No announcements found for course_id: ${course_id}`,
+            ephemeral: true
+          });
         }
 
+        console.log(announcement);
         //transform announcement HTML to text
         const announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
 
-        //reply to user
-        interaction.reply(`\`\`\`Title: ${announcement[0].title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement[0].user_name}\`\`\``);
+        //get course name based on user inputted ID
+        const course_name = await announcementHandler.fetchCourseNameById(course_id, db);
+
+        //create embed -- constructor
+        const embed = new EmbedBuilder()
+          .setColor('e63f3b')
+          .setTitle(`📢 -- ${announcement[0].title} `)
+          .setDescription(`${announcementHTMLtoText}`)
+          .addFields(
+            { name: "Course Name", value: course_name, inline: true },
+            { name: "Posted by", value: announcement[0].user_name, inline: true },
+            { name: 'Link', value: announcement[0].html_url }
+          )
+          .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
+
+        //reply to user in ghost mode
+        await interaction.reply({ embeds: [embed], ephemeral: true });
+
       }
+    } catch (error) {
+      interaction.reply("An error occured.");
+      console.log(error);
+    }
+
+    //ADD CHANNEL TO COURSE
+    try {
       if (interaction.commandName === "add_channel_to_course") {
         const courseId = interaction.options.getInteger('course_id');
         const courseName = interaction.options.getString('course_name');
         const channelDiscordId = interaction.options.getString('channel_discord_id');
 
-        try {
+        //get guild
+        const guild = client.guilds.cache.get(process.env.SERVER_ID);
 
-          //insert the data into the courses table
-          await courseHandler.saveCoursesWithNameAndDiscord(courseId, courseName, channelDiscordId, db);
+        //get all text channels of that guild
+        const textChannels = guild.channels.cache.filter(channel => channel.type === ChannelType.GuildText).map(channel => ({
+          id: channel.id
+        }));
 
-          //respond to the user
-          await interaction.reply(`Course saved!\nCourse ID: ${courseId}\nCourse Name: ${courseName}\nChannel Discord ID: ${channelDiscordId}`);
+        //get all course IDs from Canvas
+        const courses = await API.axiosCanvasAPICall(`${process.env.CANVAS_BASE_URL}/courses`, requestOptions.getEnrolledCourses, client);
 
-        } catch (error) {
-          console.error('Error inserting into database:', error);
-          await interaction.reply('There was an error saving the course. Please try again.');
+        let courseFound = false;
+        let channelFound = false;
+
+        //check if course exists
+        for (const course of courses) {
+          if (course.id === courseId) {
+            courseFound = true;
+            break;
+          }
         }
 
+        // Check if Discord channel ID exists
+        for (const textChannel of textChannels) {
+          if (textChannel.id === channelDiscordId) {
+            channelFound = true;
+            break;
+          }
+        }
+
+        // Handle saving only if both course and channel are found
+        if (courseFound && channelFound) {
+          const succesful = await courseHandler.saveCoursesWithNameAndDiscord(courseId, courseName, channelDiscordId, db);
+          if (!succesful) {
+            await interaction.reply(`An error occurred while saving the course to the database. Possible double entry?`);
+          } else {
+            await interaction.reply(`Course saved!\nCourse ID: ${courseId}\nCourse Name: ${courseName}\nChannel Discord ID: ${channelDiscordId}`);
+          }
+        } else {
+          // Respond based on what was found
+          let responseMessage = '';
+
+          if (!courseFound) {
+            responseMessage += `Course ID: ${courseId} does not exist in Canvas. Please provide a valid course id!\n`;
+          }
+
+          if (!channelFound) {
+            responseMessage += `Discord channel ID: ${channelDiscordId} is not correct. Please provide a valid channel ID!\n`;
+          }
+
+          await interaction.reply(responseMessage.trim());
+        }
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error fetching courses or saving data:', error);
+      await interaction.reply(`An error occurred while processing your request.`);
     }
   }
 });

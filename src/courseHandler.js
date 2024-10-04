@@ -36,9 +36,23 @@ async function saveCoursesWithNameAndDiscord(course_id, course_name, course_disc
       course_discordid,
       `courses/${course_id}`
     ]);
-    return courses;
+    return courses, true;
   } catch (error) {
     console.log(error);
+    return false;
+  }
+}
+async function getCourseDiscordChannel(course_id, db) {
+  try {
+    var [rows] = await db.query(`SELECT channeldiscord_id FROM courses WHERE course_id = ?`, [course_id]);
+    if (rows.length === 0) {
+      console.log(`No discord channel ID found for course ID: ${courseId}`);
+      return null;
+    }
+    //return as string because discord needs it as string
+    return String(rows[0].channeldiscord_id);
+  } catch (error) {
+
   }
 }
 
@@ -47,5 +61,6 @@ module.exports = {
   saveCoursesToDB,
   getAllCourses,
   getCourseIds,
-  saveCoursesWithNameAndDiscord
+  saveCoursesWithNameAndDiscord,
+  getCourseDiscordChannel
 };

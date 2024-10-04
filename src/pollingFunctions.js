@@ -22,6 +22,7 @@ async function pollAnnouncements(db, requestOptions, client) {
   isPolling = true;
 
   try {
+
     //get currently enlisted courses from db
     const courses = await courseHandler.getAllCourses(db);
 
@@ -37,6 +38,9 @@ async function pollAnnouncements(db, requestOptions, client) {
       //get the posted announcement IDs from the database
       const postedIds = await announcementHandler.getPostedAnnouncements(db, course.id);
 
+      //get the discord channel id from the database for the course
+      const discordChannelId = await courseHandler.getCourseDiscordChannel(course.course_id, db);
+
       //filter for new announcements, comparing them with db stored announcements
       const newAnnouncements = announcements.filter((ann) => !postedIds.includes(ann.id));
 
@@ -45,7 +49,8 @@ async function pollAnnouncements(db, requestOptions, client) {
         await sendMessage.postAnnouncementsAndSave(
           client,
           newAnnouncements,
-          process.env.ANNOUNCEMENT_CHANNEL_ID,
+          discordChannelId,
+          // process.env.ANNOUNCEMENT_CHANNEL_ID,
           db,
           course.course_id
         );
@@ -110,12 +115,15 @@ async function pollAssignments(db, requestOptions, client) {
           await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
         }
       }
+      //get the discord channel id from the database for the course
+      const discordChannelId = await courseHandler.getCourseDiscordChannel(course.course_id, db);
+
       //if new assignments are found, post them in the channel and save to the database
       if (newAssignments.length) {
         await sendMessage.postAssignmentAndSave(
           client,
           newAssignments,
-          process.env.ASSIGNMENT_CHANNEL_ID,
+          discordChannelId,
           db,
           course.course_id
         );
