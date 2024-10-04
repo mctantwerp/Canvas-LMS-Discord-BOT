@@ -1,3 +1,5 @@
+//we use env file for secret tokens
+require("dotenv").config();
 const bot = require("./initBot.js");
 const client = bot.initBot();
 const API = require("./APICalls.js");
@@ -10,8 +12,6 @@ const slashDeploy = require("./slash-deploy.js");
 
 const axios = require('axios');
 
-//we use env file for secret tokens
-require("dotenv").config();
 
 const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
