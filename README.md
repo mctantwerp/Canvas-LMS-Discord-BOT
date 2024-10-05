@@ -1,4 +1,6 @@
 # ninjas2425-CanvasBot
+![image](https://github.com/user-attachments/assets/97e68a62-f6e9-41d5-b2fe-708b49464401)
+
 
 ## Welcome to our guide to set up your own Canvas discord bot!
 This bot is meant to gather all new announcements from your canvas courses and post them in a certain discord channel.
