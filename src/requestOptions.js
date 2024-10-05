@@ -18,6 +18,21 @@ const getLatestAnnouncementCall = {
         per_page: 1, // fetch only the latest announcement
     }
 };
+function getUpcomingAnnouncements(date) {
+
+    const getLatestAnnouncementCall = {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${apiKey}`
+        },
+        params: {
+            only_announcements: true,
+            start_date: date,
+        }
+    };
+
+    return getLatestAnnouncementCall;
+}
 
 const getEnrolledCourses = {
     method: 'GET',
@@ -39,5 +54,5 @@ const getUpcomingAssignments = {
 };
 
 module.exports = {
-    basic, getLatestAnnouncementCall, getEnrolledCourses, getUpcomingAssignments
+    basic, getLatestAnnouncementCall, getEnrolledCourses, getUpcomingAssignments, getUpcomingAnnouncements
 }

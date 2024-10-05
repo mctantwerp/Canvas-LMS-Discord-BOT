@@ -41,9 +41,14 @@ client.on("ready", async () => {
     //promise that resolves after specific milliseconds, this way we avoid the two polling functions interfering with each other. this could lead to some returns being null etc
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
   async function runSequentialPolling() {
     while (true) {
-      await pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
+      //get current  date in US format
+      var currentDate = new Date();
+      currentDate = currentDate.toISOString().split('T')[0];
+
+      await pollingFunctions.pollAnnouncements(db, requestOptions.getUpcomingAnnouncements(currentDate), client);
       await delay(5000);
       await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
       await delay(5000);
@@ -135,7 +140,6 @@ client.on("interactionCreate", async (interaction) => {
 
         //get course name based on user inputted ID
         const course_name = await announcementHandler.getCourseNameById(course_id, db);
-        console.log(course_name);
 
         //use this api url for fetching announcements
         const assignment = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
@@ -166,7 +170,8 @@ client.on("interactionCreate", async (interaction) => {
           .setDescription(`${assignmentHTMLtoText}`)
           .addFields(
             { name: "Course Name", value: course_name, inline: true },
-            { name: 'Link', value: assignment[0].html_url }
+            { name: 'Link', value: assignment[0].html_url },
+            { name: 'Due Date (US)', value: assignment[0].due_at ? Intl.DateTimeFormat('en-US').format(new Date(assignment[0].due_at)) : "No deadline given", inline: true },
           )
           .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
 
