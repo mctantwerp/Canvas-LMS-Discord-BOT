@@ -51,6 +51,7 @@ client.on("ready", async () => {
       await delay(5000);
     }
   }
+  slashDeploy.slashRegister(db);
   runSequentialPolling();
 
 });
@@ -77,31 +78,32 @@ client.on("interactionCreate", async (interaction) => {
     try {
       if (interaction.commandName === "get_latest_announcement") {
 
-        // //save userinput --> ONLY IF USING USER INPUT FOR GET LATEST ANNOUNCEMENTS
-        // const course_id = interaction.options.getInteger("course");
-        // if (course_id <= 0) {
-        //   return interaction.reply("Please enter a valid course ID.");
-        // }
-
         //create course api url
         const course_id = interaction.options.getString("course_name");
         const apiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course_id}&per_page=1`;
 
+        //get course name based on user inputted ID
+        const course_name = await announcementHandler.getCourseNameById(course_id, db);
+
         //use this api url for fetching announcements
         const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
+
         if (!announcement || announcement.length === 0) {
-          return interaction.reply({
-            content: `No announcements found for course_id: ${course_id}`,
-            ephemeral: true
-          });
+          const embed = new EmbedBuilder()
+            .setColor('e63f3b')
+            .setTitle(`📢 -- No new announcements found! `)
+            .setDescription(`Sadly, there have been no announcements found for this courses`)
+            .addFields(
+              { name: "Course Name", value: course_name, inline: true },
+            )
+            .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
+
+          //reply to user in ghost mode
+          return interaction.reply({ embeds: [embed], ephemeral: true });
         }
 
-        console.log(announcement);
         //transform announcement HTML to text
         const announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
-
-        //get course name based on user inputted ID
-        const course_name = await announcementHandler.fetchCourseNameById(course_id, db);
 
         //create embed -- constructor
         const embed = new EmbedBuilder()
@@ -116,11 +118,64 @@ client.on("interactionCreate", async (interaction) => {
           .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
 
         //reply to user in ghost mode
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        return interaction.reply({ embeds: [embed], ephemeral: true });
 
       }
     } catch (error) {
       interaction.reply("An error occured.");
+      console.log(error);
+    }
+    //GET UPCOMING ASSIGNMENT
+    try {
+      if (interaction.commandName === "get_upcoming_assignment") {
+
+        //create course api url
+        const course_id = interaction.options.getString("course_name");
+        const apiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course_id}/assignments?bucket=upcoming`;
+
+        //get course name based on user inputted ID
+        const course_name = await announcementHandler.getCourseNameById(course_id, db);
+        console.log(course_name);
+
+        //use this api url for fetching announcements
+        const assignment = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
+
+
+        //check if assignment is empty  
+        if (!assignment || assignment.length === 0) {
+          const embed = new EmbedBuilder()
+            .setColor('e63f3b')
+            .setTitle(`📝 -- No upcoming assignments found! `)
+            .setDescription(`There have been no upcoming assignments found. Please keep in kind that the bot only filters on upcoming assignments, these are in a range of maximum 7 days.`)
+            .addFields(
+              { name: "Course Name", value: course_name, inline: true },
+            )
+            .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
+
+          //reply to user in ghost mode
+          return interaction.reply({ embeds: [embed], ephemeral: true });
+        }
+
+        //transform announcement HTML to text
+        const assignmentHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(assignment[0].description);
+
+        //create embed -- constructor
+        const embed = new EmbedBuilder()
+          .setColor('e63f3b')
+          .setTitle(`📝 -- ${assignment[0].name} `)
+          .setDescription(`${assignmentHTMLtoText}`)
+          .addFields(
+            { name: "Course Name", value: course_name, inline: true },
+            { name: 'Link', value: assignment[0].html_url }
+          )
+          .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
+
+        //reply to user in ghost mode
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+
+      }
+    } catch (error) {
+      interaction.reply({ content: "An error occurred.", ephemeral: true });
       console.log(error);
     }
 
@@ -165,9 +220,9 @@ client.on("interactionCreate", async (interaction) => {
         if (courseFound && channelFound) {
           const succesful = await courseHandler.saveCoursesWithNameAndDiscord(courseId, courseName, channelDiscordId, db);
           if (!succesful) {
-            await interaction.reply(`An error occurred while saving the course to the database. Possible double entry?`);
+            return interaction.reply({ content: `An error occurred while saving the course to the database. Possible double entry?` }, emphemeral = true);
           } else {
-            await interaction.reply(`Course saved!\nCourse ID: ${courseId}\nCourse Name: ${courseName}\nChannel Discord ID: ${channelDiscordId}`);
+            return interaction.reply({ content: `Course saved!\nCourse ID: ${courseId}\nCourse Name: ${courseName}\nChannel Discord ID: ${channelDiscordId}` }, emphemeral = true);
           }
         } else {
           // Respond based on what was found
@@ -181,12 +236,34 @@ client.on("interactionCreate", async (interaction) => {
             responseMessage += `Discord channel ID: ${channelDiscordId} is not correct. Please provide a valid channel ID!\n`;
           }
 
-          await interaction.reply(responseMessage.trim());
+          return interaction.reply({ content: responseMessage.trim(), ephemeral: true });
         }
       }
     } catch (error) {
       console.error('Error fetching courses or saving data:', error);
-      await interaction.reply(`An error occurred while processing your request.`);
+      await interaction.reply({ content: `An error occurred while processing your request.`, ephemeral: true });
+    }
+
+    //GET LIST OF ALL COURSES
+    try {
+      if (interaction.commandName === "get_all_courses") {
+        const courses = await courseHandler.getAllCourses(db);
+        const embed = new EmbedBuilder()
+          .setColor('e63f3b')
+          .setTitle(`👨‍🏫 -- All the courses! `)
+          .addFields(
+            { name: "Courses: ", value: courses.map(course => course.name).join('\n'), inline: true },
+          )
+          .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
+
+        //reply to user in ghost mode
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+
+      }
+
+    } catch (error) {
+      console.log(error);
+
     }
   }
 });

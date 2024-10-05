@@ -47,6 +47,19 @@ const slashRegister = async (db) => {
 
                         return option; // Return the option after adding choices
                     }),
+                //COMMAND TO GET UPCOMING ASSIGNMENT WITHOUT USER INPUT, ONLY SUGGESTIONS
+                new SlashCommandBuilder()
+                    .setName('get_upcoming_assignment') // Set the command name
+                    .setDescription('Get an upcoming assignment of a specific course!') // Set the command description
+                    .addStringOption(option => {
+                        option.setName("course_name")
+                            .setDescription("Select the course you want to get the upcoming assignment of.")
+                            .setRequired(true) // This makes the option required
+                            .addChoices(courses); // Use spread operator to add choices
+
+                        return option; // Return the option after adding choices
+                    }),
+
 
                 //COMMAND TO ADD A CHANNEL TO A COURSE
                 new SlashCommandBuilder()
@@ -67,6 +80,12 @@ const slashRegister = async (db) => {
                             .setDescription('Enter the Discord channel ID')
                             .setRequired(true) // User must input the Discord channel ID
                     ),
+
+                //GET ALL COURSES
+                new SlashCommandBuilder()
+                    .setName('get_all_courses')
+                    .setDescription('Get all courses in a list!')
+
             ]
         });
         console.log('Commands registered successfully');
