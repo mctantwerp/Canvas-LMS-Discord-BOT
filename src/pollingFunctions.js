@@ -33,7 +33,7 @@ async function pollAnnouncements(db, requestOptions, client) {
       const courseApiUrl = `${process.env.CANVAS_BASE_URL}/announcements?context_codes[]=course_${course.course_id}`;
 
       //use this api url for fetching announcements
-      const announcements = await API.regularCanvasAPICall(courseApiUrl, requestOptions, client);
+      const announcements = await API.axiosCanvasAPICall(courseApiUrl, requestOptions, client);
 
       //get the posted announcement IDs from the database
       const postedIds = await announcementHandler.getPostedAnnouncements(db, course.id);
@@ -50,7 +50,6 @@ async function pollAnnouncements(db, requestOptions, client) {
           client,
           newAnnouncements,
           discordChannelId,
-          // process.env.ANNOUNCEMENT_CHANNEL_ID,
           db,
           course.course_id
         );
@@ -89,10 +88,10 @@ async function pollAssignments(db, requestOptions, client) {
     //loop through each course and fetch assignments
     for (const course of courses) {
       //create assignment API URL
-      const assignmentApiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course.course_id}/assignments?bucket=future`;
+      const assignmentApiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course.course_id}/assignments`;
 
       //fetch assignments using the API
-      const assignments = await API.regularCanvasAPICall(assignmentApiUrl, requestOptions, client);
+      const assignments = await API.axiosCanvasAPICall(assignmentApiUrl, requestOptions, client);
 
       //filter for upcoming assignments only = assignments with due date after current date
       const upcomingAssignments = assignments.filter(assignment => {
@@ -107,14 +106,17 @@ async function pollAssignments(db, requestOptions, client) {
       const newAssignments = upcomingAssignments.filter((assignment) => !postedIds.includes(assignment.id));
 
       //for each new assignment, send a reminder if needed
-      for (const element of upcomingAssignments) {
-        const reminderData = await reminderController.sendReminder(element);
-        //if reminderData exists, send the reminder to the channel
-        if (reminderData) {
-          const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
-          await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
-        }
-      }
+
+      //CURRENTLY IN COMMENT BECAUSE IT KEEPS POSTING REMINDERS AND NOT REMEMBERING IF IT ALREADY SENT ONE
+
+      // for (const element of upcomingAssignments) {
+      //   const reminderData = await reminderController.sendReminder(element);
+      //   //if reminderData exists, send the reminder to the channel
+      //   if (reminderData) {
+      //     const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
+      //     await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
+      //   }
+      // }
       //get the discord channel id from the database for the course
       const discordChannelId = await courseHandler.getCourseDiscordChannel(course.course_id, db);
 

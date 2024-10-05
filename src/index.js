@@ -43,7 +43,7 @@ client.on("ready", async () => {
   }
   async function runSequentialPolling() {
     while (true) {
-      await pollingFunctions.pollAnnouncements(db, requestOptions.basic, client);
+      await pollingFunctions.pollAnnouncements(db, requestOptions.getLatestAnnouncementCall, client);
       await delay(5000);
       await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
       await delay(5000);
