@@ -63,7 +63,7 @@ function createAnnouncementEmbed(announcement, course_name, announcementHTMLtoTe
 }
 
 function createAllCoursesCommandEmbed(courses) {
-    if (courses.length === 0) {
+    if (courses.length === 0 || !courses) {
         return new EmbedBuilder()
             .setColor('e63f3b')
             .setTitle(`👨‍🏫 -- No courses found! `)
