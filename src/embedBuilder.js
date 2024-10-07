@@ -63,6 +63,13 @@ function createAnnouncementEmbed(announcement, course_name, announcementHTMLtoTe
 }
 
 function createAllCoursesCommandEmbed(courses) {
+    if (courses.length === 0) {
+        return new EmbedBuilder()
+            .setColor('e63f3b')
+            .setTitle(`👨‍🏫 -- No courses found! `)
+            .setDescription(`Sadly, there have been no courses found in the database.`)
+            .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct
+    }
     return new EmbedBuilder()
         .setColor('e63f3b')
         .setTitle(`👨‍🏫 -- All the courses! `)
