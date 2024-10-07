@@ -1,6 +1,4 @@
 const apiKey = process.env.CANVAS_API;
-
-
 const basic = {
     method: 'GET',
     headers: {

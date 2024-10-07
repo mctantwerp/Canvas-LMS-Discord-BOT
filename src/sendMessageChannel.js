@@ -1,7 +1,6 @@
 const announcementHandler = require("./announcementHandler.js");
 const helperFunctions = require("./helperFunctions.js");
 const assignmentHandler = require("./assignmentsHandler.js");
-const { ChannelType } = require("discord.js");
 const embedBuilder = require("./embedBuilder.js");
 
 async function sendMessageToChannel(client, message, channel_id) {

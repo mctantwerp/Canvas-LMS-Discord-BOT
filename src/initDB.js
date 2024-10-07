@@ -22,8 +22,6 @@ async function createDbConnection() {
     console.error('Error connecting to MySQL database:', error);
     throw error; // Rethrow the error to handle it elsewhere
   }
-
-  return connection;
 };
 
 module.exports = {

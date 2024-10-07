@@ -3,15 +3,10 @@ require("dotenv").config();
 const bot = require("./initBot.js");
 const client = bot.initBot();
 const API = require("./APICalls.js");
-const sendMessage = require("./sendMessageChannel.js");
-const apiUrlGenerator = require("./apiUrlGenerator.js");
 const courseHandler = require("./courseHandler.js");
 const pollingFunctions = require("./pollingFunctions.js");
-const reminderController = require("./reminder.js");
 const slashDeploy = require("./slash-deploy.js");
-const axios = require('axios');
 const embedBuilder = require("./embedBuilder.js");
-
 const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
 const requestOptions = require("./requestOptions.js");
@@ -20,20 +15,7 @@ var db;
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
   console.log(`Bot is online.`);
-  //make connection to database
   db = await require("./initDB.js").createDbConnection();
-
-
-  // // //make api call to get the upcoming assignments by using requestOptions.getUpcomingAssignments
-  //var data = await API.axiosCanvasAPICall("https://canvas.kdg.be/api/v1/courses/49722/assignments", requestOptions.getUpcomingAssignments, client);
-
-
-  //generate course table information for all enrolled courses.
-  //you can see we use requestOptions.getEnrolledCourses to get the enrolled courses, this is defined in requestOptions.js
-  //we do this because canvas (if u fetch all courses of your account), will return all courses, including the ones you are not enrolled in anymore (e.g. first year courses)
-  //this way we only get the courses you are currently enrolled in
-  // await apiUrlGenerator.generateCourses(client, requestOptions.getEnrolledCourses, db);
-
 
   //function to add delay
   function delay(ms) {
@@ -43,35 +25,23 @@ client.on("ready", async () => {
 
   async function runSequentialPolling() {
     while (true) {
-      //get current date in US format
+
+      //get current date in US format, because canvas API uses this format
       var currentDate = new Date();
       currentDate = currentDate.toISOString().split('T')[0];
-
+      //polls for new announcements of CURRENT date
       await pollingFunctions.pollAnnouncements(db, requestOptions.getUpcomingAnnouncements(currentDate), client);
       await delay(5000);
+      //polls for assignments of UPCOMING --> within 7 days
       await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
       await delay(5000);
+      //register commands, needed for slash commands -- if user adds new course, then we need to register the new course for commands like /get_latest_announcement
       await slashDeploy.slashRegister(db);
       await delay(5000);
     }
   }
-  slashDeploy.slashRegister(db);
   runSequentialPolling();
 
-});
-
-//when the bot receives a message, it will respond with "pong"
-client.on("messageCreate", (message) => {
-  //console.log(message.content);
-  if (message.content === "ping") {
-    message.reply("pong");
-  } else if (message.content === "salam") {
-    message.reply("aleikum ");
-  } else if (message.content === "marco") {
-    message.reply("polo");
-  } else if (message.content === "lepel") {
-    message.reply("tepel");
-  }
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -126,20 +96,27 @@ client.on("interactionCreate", async (interaction) => {
         //use this api url for fetching announcements
         const assignment = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
 
-        var assignmentHTMLtoText;
-        if (!assignment || assignment.length === 0) {
-          assignmentHTMLtoText = "";
+        const embeds = [];
+
+        if (Array.isArray(assignment) && assignment.length > 0) {
+          // Create embed -- constructor
+          for (const assig of assignment) {
+            // Only pass the assignment message to helper if it exists
+            const assignmentHTMLtoText = assig.message ? await helperFunctions.announcementHTMLtoTextONLY(assig.message) : "";
+
+            // Use createAssignmentEmbed which already handles empty cases
+            const embed = embedBuilder.createAssignmentEmbed(assig, course_name, assignmentHTMLtoText);
+
+            // Add the embed to the embeds array
+            embeds.push(embed.toJSON());
+          }
+        } else {
+          const embed = embedBuilder.createAssignmentEmbed(null, course_name, null);
+          embeds.push(embed.toJSON());
         }
-        else {
-          assignmentHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(assignment[0].message);
-        }
 
-        //create embed -- constructor
-        const embed = embedBuilder.createAssignmentEmbed(assignment[0], course_name, assignmentHTMLtoText);
-
-        //reply to user in ghost mode
-        return interaction.reply({ embeds: [embed], ephemeral: true });
-
+        // Reply to user in ghost mode with the embeds
+        return interaction.reply({ embeds: embeds, ephemeral: true });
       }
     } catch (error) {
       interaction.reply({ content: "An error occurred.", ephemeral: true });
@@ -156,7 +133,7 @@ client.on("interactionCreate", async (interaction) => {
         //get guild
         const guild = client.guilds.cache.get(process.env.SERVER_ID);
 
-        //get all text channels of that guild
+        //get all text channels of the guild
         const textChannels = guild.channels.cache.filter(channel => channel.type === ChannelType.GuildText).map(channel => ({
           id: channel.id
         }));

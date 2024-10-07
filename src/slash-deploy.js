@@ -22,19 +22,6 @@ const slashRegister = async (db) => {
 
         await rest.put(Routes.applicationGuildCommands(botID, serverID), {
             body: [
-                //COMMAND TO GET LATEST ANNOUNCEMENT WITH USER INPUT AND SUGGESTIONS
-                // new SlashCommandBuilder()
-                //     .setName('get_latest_announcement')
-                //     .setDescription('Get the latest announcement of a specific course!')
-                //     .addIntegerOption(option => {
-                //         option.setName("course_id")
-                //             .setDescription("The ID of a course, found in the URL of the course page.")
-                //             .setRequired(true)
-                //             .addChoices(courses); // Add the choices to the option
-
-                //         return option; // Return the option after adding choices
-                //     }),
-
                 //COMMAND TO GET LATEST ANNOUNCEMENT WITHOUT USER INPUT, ONLY SUGGESTIONS
                 new SlashCommandBuilder()
                     .setName('get_latest_announcement') // Set the command name

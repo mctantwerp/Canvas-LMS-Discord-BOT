@@ -1,6 +1,5 @@
 const API = require("./APICalls.js");
 const sendMessage = require("./sendMessageChannel.js");
-const helperFunctions = require("./helperFunctions.js");
 
 async function postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions) {
   //get database items, return array

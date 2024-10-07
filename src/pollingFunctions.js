@@ -4,8 +4,6 @@ const API = require("./APICalls.js");
 const announcementHandler = require("./announcementHandler.js");
 const sendMessage = require("./sendMessageChannel.js");
 const reminderController = require("./reminder.js");
-const helperFunctions = require("./helperFunctions.js");
-const { normalizeArray } = require("discord.js");
 require("dotenv").config();
 
 async function pollAnnouncements(db, requestOptions, client) {
@@ -105,18 +103,18 @@ async function pollAssignments(db, requestOptions, client) {
       //get channel based on discord id
       const channel = await client.channels.fetch(discordChannelId);
 
-      //for each new assignment, send a reminder if needed
-      for (const assignment of upcomingAssignments) {
-        var course_name = await assignmentsHandler.fetchCourseNameById(course.course_id, db);
-        await reminderController.sendReminder(assignment, db, course_name, channel);
-      }
-
       //if new assignments are found, post them in the channel and save to the database
       if (newAssignments.length) {
         await sendMessage.postAssignmentAndSave(client, newAssignments, discordChannelId, db, course.course_id);
         console.log("new assignment found for course", course.course_id);
       } else {
         console.log(`no new assignments found for course ${course.course_id}.`);
+      }
+
+      //for each new assignment, send a reminder if needed
+      for (const assignment of upcomingAssignments) {
+        var course_name = await assignmentsHandler.fetchCourseNameById(course.course_id, db);
+        await reminderController.sendReminder(assignment, db, course_name, channel);
       }
     }
   } catch (error) {
