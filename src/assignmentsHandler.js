@@ -31,8 +31,7 @@ async function fetchCourseNameById(courseId, db) {
       `, [courseId]);
         // Check if any rows were returned
         if (rows.length === 0) {
-            console.log(`No course name found for course ID: ${courseId}`);
-            return null; // Return null if no course is found
+            return null;
         }
         // Return the course name
         return rows[0].course_name;

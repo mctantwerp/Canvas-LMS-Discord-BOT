@@ -9,14 +9,13 @@ const courseHandler = require("./courseHandler.js");
 const pollingFunctions = require("./pollingFunctions.js");
 const reminderController = require("./reminder.js");
 const slashDeploy = require("./slash-deploy.js");
-
 const axios = require('axios');
-
+const embedBuilder = require("./embedBuilder.js");
 
 const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
 const requestOptions = require("./requestOptions.js");
-const { ChannelType, EmbedBuilder } = require("discord.js");
+const { ChannelType } = require("discord.js");
 var db;
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
@@ -44,7 +43,7 @@ client.on("ready", async () => {
 
   async function runSequentialPolling() {
     while (true) {
-      //get current  date in US format
+      //get current date in US format
       var currentDate = new Date();
       currentDate = currentDate.toISOString().split('T')[0];
 
@@ -93,34 +92,17 @@ client.on("interactionCreate", async (interaction) => {
         //use this api url for fetching announcements
         const announcement = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
 
+        var announcementHTMLtoText;
+        //transform announcement HTML to text
         if (!announcement || announcement.length === 0) {
-          const embed = new EmbedBuilder()
-            .setColor('e63f3b')
-            .setTitle(`📢 -- No new announcements found! `)
-            .setDescription(`Sadly, there have been no announcements found for this courses`)
-            .addFields(
-              { name: "Course Name", value: course_name, inline: true },
-            )
-            .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
-
-          //reply to user in ghost mode
-          return interaction.reply({ embeds: [embed], ephemeral: true });
+          announcementHTMLtoText = "";
+        }
+        else {
+          announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
         }
 
-        //transform announcement HTML to text
-        const announcementHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(announcement[0].message);
-
         //create embed -- constructor
-        const embed = new EmbedBuilder()
-          .setColor('e63f3b')
-          .setTitle(`📢 -- ${announcement[0].title} `)
-          .setDescription(`${announcementHTMLtoText}`)
-          .addFields(
-            { name: "Course Name", value: course_name, inline: true },
-            { name: "Posted by", value: announcement[0].user_name, inline: true },
-            { name: 'Link', value: announcement[0].html_url }
-          )
-          .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
+        const embed = embedBuilder.createAnnouncementEmbed(announcement[0], course_name, announcementHTMLtoText);
 
         //reply to user in ghost mode
         return interaction.reply({ embeds: [embed], ephemeral: true });
@@ -144,36 +126,16 @@ client.on("interactionCreate", async (interaction) => {
         //use this api url for fetching announcements
         const assignment = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
 
-
-        //check if assignment is empty  
+        var assignmentHTMLtoText;
         if (!assignment || assignment.length === 0) {
-          const embed = new EmbedBuilder()
-            .setColor('e63f3b')
-            .setTitle(`📝 -- No upcoming assignments found! `)
-            .setDescription(`There have been no upcoming assignments found. Please keep in kind that the bot only filters on upcoming assignments, these are in a range of maximum 7 days.`)
-            .addFields(
-              { name: "Course Name", value: course_name, inline: true },
-            )
-            .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
-
-          //reply to user in ghost mode
-          return interaction.reply({ embeds: [embed], ephemeral: true });
+          assignmentHTMLtoText = "";
+        }
+        else {
+          assignmentHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(assignment[0].message);
         }
 
-        //transform announcement HTML to text
-        const assignmentHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(assignment[0].description);
-
         //create embed -- constructor
-        const embed = new EmbedBuilder()
-          .setColor('e63f3b')
-          .setTitle(`📝 -- ${assignment[0].name} `)
-          .setDescription(`${assignmentHTMLtoText}`)
-          .addFields(
-            { name: "Course Name", value: course_name, inline: true },
-            { name: 'Link', value: assignment[0].html_url },
-            { name: 'Due Date (US)', value: assignment[0].due_at ? Intl.DateTimeFormat('en-US').format(new Date(assignment[0].due_at)) : "No deadline given", inline: true },
-          )
-          .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
+        const embed = embedBuilder.createAssignmentEmbed(assignment[0], course_name, assignmentHTMLtoText);
 
         //reply to user in ghost mode
         return interaction.reply({ embeds: [embed], ephemeral: true });
@@ -252,16 +214,13 @@ client.on("interactionCreate", async (interaction) => {
     //GET LIST OF ALL COURSES
     try {
       if (interaction.commandName === "get_all_courses") {
+        //get all courses
         const courses = await courseHandler.getAllCourses(db);
-        const embed = new EmbedBuilder()
-          .setColor('e63f3b')
-          .setTitle(`👨‍🏫 -- All the courses! `)
-          .addFields(
-            { name: "Courses: ", value: courses.map(course => course.name).join('\n'), inline: true },
-          )
-          .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' }); // Correct usage
 
-        //reply to user in ghost mode
+        //create embed
+        const embed = embedBuilder.createAllCoursesCommandEmbed(courses);
+
+        //reply to user in ghost mode with the embed
         return interaction.reply({ embeds: [embed], ephemeral: true });
 
       }

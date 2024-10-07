@@ -46,13 +46,7 @@ async function pollAnnouncements(db, requestOptions, client) {
 
       //if new announcements are found, post them in channel and save to db
       if (newAnnouncements.length) {
-        await sendMessage.postAnnouncementsAndSave(
-          client,
-          newAnnouncements,
-          discordChannelId,
-          db,
-          course.course_id
-        );
+        await sendMessage.postAnnouncementsAndSave(client, newAnnouncements, discordChannelId, db, course.course_id);
         console.log("new announcements found for course", course.course_id);
       } else {
         console.log(`no new announcements found for course ${course.course_id}.`);
@@ -105,30 +99,21 @@ async function pollAssignments(db, requestOptions, client) {
       //filter for new assignments by comparing them with db stored assignments
       const newAssignments = upcomingAssignments.filter((assignment) => !postedIds.includes(assignment.id));
 
-      //for each new assignment, send a reminder if needed
-
-      //CURRENTLY IN COMMENT BECAUSE IT KEEPS POSTING REMINDERS AND NOT REMEMBERING IF IT ALREADY SENT ONE
-
-      // for (const element of upcomingAssignments) {
-      //   const reminderData = await reminderController.sendReminder(element);
-      //   //if reminderData exists, send the reminder to the channel
-      //   if (reminderData) {
-      //     const reminderMessage = await helperFunctions.announcementHTMLtoTextString(reminderData);
-      //     await sendMessage.sendMessageToChannel(client, reminderMessage, "1287211078249611287");
-      //   }
-      // }
       //get the discord channel id from the database for the course
       const discordChannelId = await courseHandler.getCourseDiscordChannel(course.course_id, db);
 
+      //get channel based on discord id
+      const channel = await client.channels.fetch(discordChannelId);
+
+      //for each new assignment, send a reminder if needed
+      for (const assignment of upcomingAssignments) {
+        var course_name = await assignmentsHandler.fetchCourseNameById(course.course_id, db);
+        await reminderController.sendReminder(assignment, db, course_name, channel);
+      }
+
       //if new assignments are found, post them in the channel and save to the database
       if (newAssignments.length) {
-        await sendMessage.postAssignmentAndSave(
-          client,
-          newAssignments,
-          discordChannelId,
-          db,
-          course.course_id
-        );
+        await sendMessage.postAssignmentAndSave(client, newAssignments, discordChannelId, db, course.course_id);
         console.log("new assignment found for course", course.course_id);
       } else {
         console.log(`no new assignments found for course ${course.course_id}.`);
