@@ -12,9 +12,8 @@ This bot will also send reminders in the set discord channels for any assignment
 see: https://discord.com/developers/docs/intro
 select under OAuth2 -> OAuth2 URL Generator -> bot
 ![image](https://github.com/user-attachments/assets/3214d1f4-81eb-4497-ac98-64eef3c59186)
-then select under bot permissions -> send messages, view channels, read message history, use slash commands
-![image](https://github.com/user-attachments/assets/c354ae8d-8b4a-4c4e-ac3c-c91d939d2d86)
-
+then select under bot permissions -> administrator (In initBot.js we limit it's power by the intends.bitfields we give it see: https://discord.com/developers/docs/topics/gateway#list-of-intents for more info)
+![image](https://github.com/user-attachments/assets/804290da-0a80-4d7b-8279-ed89da084422)
 after that copy the generated url at the bottom of the screen and open it in a new tab, this will give you the option to invite the bot to a certain server.
 
 ### Step 2: clone the repository on your server
@@ -28,8 +27,27 @@ after that copy the generated url at the bottom of the screen and open it in a n
 - `DB_USER=""`
 - `DB_PASSWORD=""`
 - `DB_NAME=""`
+7. fill in `SERVER_ID` and `DISCORD_ID` if you are hosting it on Azure with a VLM (if you are hosting somewhere else see what it needs to connect but make sure to add these in the .env file so those values are protected)
+  
 
 ### Step 3: set up your database
 in the repo you can find a discordbot_setupdb.sql file you can run these query's to create the right database
 then you can use /addChannelWithCourse `Course_id` `Channel_id` `ChannelName`
+
+
+## Usage
+
+### slash-commands
+we've added several usefull slash commands to create an easy user experience and give you access to all the information your users will need when deploying the bot in your discord server.
+Wherever the command needs a parameter it will present you with options from data in the Database so that typing errors or non excisting courses can't be accessed.
+
+#### /get_latest_announcement
+This command will ask for a `course_name` and will then fetch the latest annoucement if it excist and send it in the channel but only for the user who asked it to see.
+
+#### /get_upcoming_assignment
+This will ask for a `course_name` and will return all upcoming assignments of the earliest date in the channel but only for the user who asked it to see.
+(note: if there are 2 assignment of the same date they both will be shown)
+
+#### /get_all_courses
+Will return a list of all active courses in the database. This can help you while you are adding channels after you complete your setup.
 
