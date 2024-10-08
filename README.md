@@ -9,37 +9,37 @@ This bot will also send reminders in the set discord channels for any assignment
 ## Setup:
 
 ### Step 1: create a discord application in the discord developer portal
-see: https://discord.com/developers/docs/intro
-select under OAuth2 -> OAuth2 URL Generator -> bot
+See: https://discord.com/developers/docs/intro
+Select under OAuth2 -> OAuth2 URL Generator -> bot
 ![image](https://github.com/user-attachments/assets/3214d1f4-81eb-4497-ac98-64eef3c59186)
-then select under bot permissions -> administrator (In initBot.js we limit it's power by the intends.bitfields we give it see: https://discord.com/developers/docs/topics/gateway#list-of-intents for more info)
+Then select under bot permissions -> administrator (In initBot.js we limit it's power by the intends.bitfields we give it see: https://discord.com/developers/docs/topics/gateway#list-of-intents for more info)
 ![image](https://github.com/user-attachments/assets/804290da-0a80-4d7b-8279-ed89da084422)
-after that copy the generated url at the bottom of the screen and open it in a new tab, this will give you the option to invite the bot to a certain server.
-(note: make sure you are owner or have admin permissions of the server where you want to add the bot to)
+After that copy the generated url at the bottom of the screen and open it in a new tab, this will give you the option to invite the bot to a certain server.
+(Note: make sure you are owner or have admin permissions of the server where you want to add the bot to)
 
 ### Step 2: clone the repository on your server
-1. run `npm install`
-2. create .env file (copy the example file)
-3. go back to your discord application, go the bot --> reset token --> this is the DISCORD_TOKEN= in your .env
-4. then go to [...](https://canvas.kdg.be/profile/settings) and generate your canvas api token (CANVAS_API=) (+new acces Token)
-5. after that change the `CANVAS_COURSES_URL=` and `CANVAS_BASE_URL=` to your institute
-6. then fill in all your database info
+1. Run `npm install`
+2. Create .env file (copy the example file)
+3. Go back to your discord application, go the bot --> reset token --> this is the DISCORD_TOKEN= in your .env
+4. Then go to [...](https://canvas.kdg.be/profile/settings) and generate your canvas api token (CANVAS_API=) (+new acces Token)
+5. After that change the `CANVAS_COURSES_URL=` and `CANVAS_BASE_URL=` to your institute
+6. Then fill in all your database info
 - `DB_HOST=""`
 - `DB_USER=""`
 - `DB_PASSWORD=""`
 - `DB_NAME=""`
-7. fill in `SERVER_ID` and `DISCORD_ID` if you are hosting it on Azure with a VLM (if you are hosting somewhere else see what it needs to connect but make sure to add these in the .env file so those values are protected)
+7. Fill in `SERVER_ID` and `DISCORD_ID` if you are hosting it on Azure with a VLM (if you are hosting somewhere else see what it needs to connect but make sure to add these in the .env file so those values are protected)
   
 
 ### Step 3: set up your database
-in the repo you can find a discordbot_setupdb.sql file you can run these query's to create the right database
-then you can use /addChannelWithCourse `Course_id` `Channel_id` `ChannelName`
+In the repo you can find a discordbot_setupdb.sql file you can run these query's to create the right database.
+Then you can use /addChannelWithCourse `Course_id` `Channel_id` `ChannelName`
 
 
 ## Usage
 
 ### slash-commands
-we've added several usefull slash commands to create an easy user experience and give you access to all the information your users will need when deploying the bot in your discord server.
+We've added several usefull slash commands to create an easy user experience and give you access to all the information your users will need when deploying the bot in your discord server.
 Wherever the command needs a parameter it will present you with options from data in the Database so that typing errors or non excisting courses can't be accessed.
 
 #### /get_latest_announcement
