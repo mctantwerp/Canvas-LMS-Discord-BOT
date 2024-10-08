@@ -164,9 +164,9 @@ client.on("interactionCreate", async (interaction) => {
         if (courseFound && channelFound) {
           const succesful = await courseHandler.saveCoursesWithNameAndDiscord(courseId, courseName, channelDiscordId, db);
           if (!succesful) {
-            return interaction.reply({ content: `An error occurred while saving the course to the database. Possible double entry?` }, emphemeral = true);
+            return interaction.reply({ content: `An error occurred while saving the course to the database. Possible double entry?` }, ephemeral = true);
           } else {
-            return interaction.reply({ content: `Course saved!\nCourse ID: ${courseId}\nCourse Name: ${courseName}\nChannel Discord ID: ${channelDiscordId}` }, emphemeral = true);
+            return interaction.reply({ content: `Course saved!\nCourse ID: ${courseId}\nCourse Name: ${courseName}\nChannel Discord ID: ${channelDiscordId}` }, ephemeral = true);
           }
         } else {
           // Respond based on what was found
