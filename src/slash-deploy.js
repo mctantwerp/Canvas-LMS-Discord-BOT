@@ -5,7 +5,7 @@ const { REST, Routes, SlashCommandBuilder, ChannelType } = require('discord.js')
 
 //info needed
 const botToken = process.env.DISCORD_TOKEN;
-const botID = process.env.BOT_ID;
+const botID = process.env.DISCORD_ID;
 const serverID = process.env.SERVER_ID;
 
 const rest = new REST().setToken(botToken);
