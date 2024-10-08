@@ -11,17 +11,53 @@ const helperFunctions = require("./helperFunctions.js");
 const announcementHandler = require("./announcementHandler.js");
 const requestOptions = require("./requestOptions.js");
 const { ChannelType } = require("discord.js");
+const { reset } = require("nodemon");
 var db;
 //when the bot is ready, execute the following code
 client.on("ready", async () => {
   console.log(`Bot is online.`);
   db = await require("./initDB.js").createDbConnection();
 
+  // async function resetCommands(guildId) {
+  //   try {
+  //     const guild = await client.guilds.fetch(guildId);
+  //     const commands = await guild.commands.fetch(); // Fetch all commands for the guild
+
+  //     // Delete each command
+  //     for (const command of commands.values()) {
+  //       await guild.commands.delete(command.id);
+  //       console.log(`Deleted command: ${command.name}`);
+  //     }
+
+  //     console.log('All commands have been reset.');
+  //   } catch (error) {
+  //     console.error("Error resetting commands:", error);
+  //   }
+  // }
+  // async function resetGlobalCommands() {
+  //   try {
+  //     const globalCommands = await client.application.commands.fetch(); // Fetch global commands
+
+  //     // Delete each global command
+  //     for (const command of globalCommands.values()) {
+  //       await client.application.commands.delete(command.id);
+  //       console.log(`Deleted global command: ${command.name}`);
+  //     }
+
+  //     console.log('All global commands have been reset.');
+  //   } catch (error) {
+  //     console.error("Error resetting global commands:", error);
+  //   }
+  // }
+  // resetCommands(process.env.SERVER_ID);
+  // resetGlobalCommands();
+
   //function to add delay
   function delay(ms) {
     //promise that resolves after specific milliseconds, this way we avoid the two polling functions interfering with each other. this could lead to some returns being null etc
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+  await slashDeploy.slashRegister(db, client);
 
   async function runSequentialPolling() {
     while (true) {
@@ -36,7 +72,7 @@ client.on("ready", async () => {
       await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
       await delay(5000);
       //register commands, needed for slash commands -- if user adds new course, then we need to register the new course for commands like /get_latest_announcement
-      await slashDeploy.slashRegister(db);
+      // await slashDeploy.slashRegister(db, client);
       await delay(5000);
     }
   }
