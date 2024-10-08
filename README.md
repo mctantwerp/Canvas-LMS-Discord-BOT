@@ -28,7 +28,8 @@ After that copy the generated url at the bottom of the screen and open it in a n
 - `DB_USER=""`
 - `DB_PASSWORD=""`
 - `DB_NAME=""`
-7. Fill in `SERVER_ID` and `DISCORD_ID` if you are hosting it on Azure with a VLM (if you are hosting somewhere else see what it needs to connect but make sure to add these in the .env file so those values are protected)
+7. Fill in `SERVER_ID` and `BOT_ID`. These are meant to add commands and circumvent the hour waiting time.
+  (Note: you can find the `SERVER_ID` by rightclicking the server icon -> copy server ID / `BOT_ID` by rightclicking the bot inside the server -> copy user ID)
   
 
 ### Step 3: set up your database
