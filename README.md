@@ -15,6 +15,7 @@ select under OAuth2 -> OAuth2 URL Generator -> bot
 then select under bot permissions -> administrator (In initBot.js we limit it's power by the intends.bitfields we give it see: https://discord.com/developers/docs/topics/gateway#list-of-intents for more info)
 ![image](https://github.com/user-attachments/assets/804290da-0a80-4d7b-8279-ed89da084422)
 after that copy the generated url at the bottom of the screen and open it in a new tab, this will give you the option to invite the bot to a certain server.
+(note: make sure you are owner or have admin permissions of the server where you want to add the bot to)
 
 ### Step 2: clone the repository on your server
 1. run `npm install`
