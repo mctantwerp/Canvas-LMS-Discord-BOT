@@ -1,6 +1,7 @@
 const announcementHandler = require("./announcementHandler.js");
 const helperFunctions = require("./helperFunctions.js");
 const assignmentHandler = require("./assignmentsHandler.js");
+const embedBuilder = require("./embedBuilder.js");
 
 async function sendMessageToChannel(client, message, channel_id) {
   if (message === undefined) {
@@ -23,16 +24,21 @@ async function postAnnouncementsAndSave(client, announcements, channel_id, db, c
 
   for (const announcement of announcements) {
     //start conversion html to text
-    const announcementHTMLtoText = helperFunctions.announcementHTMLtoTextString(
+    const announcementHTMLtoText = helperFunctions.announcementHTMLtoTextONLY(
       announcement.message
     );
+
     //save in db
     await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText, course_id);
+
     //get course name
     var course_name = await announcementHandler.fetchCourseNameById(course_id, db);
-    console.log(course_name);
+
     //send it to the channel and log in console
-    await channel.send(`\`\`\`Title: ${announcement.title}\n\nDescription: ${announcementHTMLtoText}\n\nCourse: ${course_name}\n\nPosted by: ${announcement.author.display_name}\`\`\``);
+    const embed = embedBuilder.createAnnouncementEmbed(announcement, course_name, announcementHTMLtoText);
+
+    //send in channel
+    await channel.send({ embeds: [embed] });
   }
 }
 async function postAssignmentAndSave(client, assignments, channel_id, db, course_id) {
@@ -41,16 +47,21 @@ async function postAssignmentAndSave(client, assignments, channel_id, db, course
   const channel = await client.channels.fetch(channel_id);
 
   for (const assignment of assignments) {
+
     //start conversion html to text
-    const assignmentHTMLtoText = helperFunctions.announcementHTMLtoTextString(
-      assignment.description
-    );
+    const assignmentHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(assignment.description);
+
     //save in db
     await assignmentHandler.saveAssignment(assignment, db, assignmentHTMLtoText, course_id);
+
     //get course name
-    var course_name = await announcementHandler.fetchCourseNameById(course_id, db);
-    //send it to the channel and log in console
-    await channel.send(`\`\`\`Title: ${assignment.name}\n\nDescription: ${assignmentHTMLtoText}\n\nCourse: ${course_name}\`\`\``);
+    const course_name = await assignmentHandler.fetchCourseNameById(course_id, db);
+
+    //embed builder
+    const embed = embedBuilder.createAssignmentEmbed(assignment, course_name, assignmentHTMLtoText);
+
+    //send to channel
+    channel.send({ embeds: [embed] });
   }
 }
 

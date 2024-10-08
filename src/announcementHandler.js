@@ -1,6 +1,5 @@
 const API = require("./APICalls.js");
 const sendMessage = require("./sendMessageChannel.js");
-const helperFunctions = require("./helperFunctions.js");
 
 async function postAnnouncementsFromDatabaseToDiscord(db, client, requestOptions) {
   //get database items, return array
@@ -29,7 +28,7 @@ async function getPostedAnnouncements(db) {
   return rows.map(row => row.canvas_id);
 }
 
-
+//will only give a course name if found in announcement table
 async function fetchCourseNameById(courseId, db) {
   try {
     var [rows] = await db.query(`
@@ -41,7 +40,7 @@ async function fetchCourseNameById(courseId, db) {
     // Check if any rows were returned
     if (rows.length === 0) {
       console.log(`No course name found for course ID: ${courseId}`);
-      return null; // Return null if no course is found
+      return null;
     }
     // Return the course name
     return rows[0].course_name;
@@ -51,9 +50,29 @@ async function fetchCourseNameById(courseId, db) {
   }
 }
 
+async function getCourseNameById(courseId, db) {
+  try {
+    var [rows] = await db.query(`SELECT name FROM courses WHERE course_id = ?`, [courseId]);
+    // Check if any rows were returned
+    if (rows.length === 0) {
+      console.log(`No course name found for course ID: ${courseId}`);
+      return null;
+    }
+    // Return the course name
+    return rows[0].name;
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
+
+
+
+
 module.exports = {
   postAnnouncementsFromDatabaseToDiscord,
   saveAnnouncement,
   getPostedAnnouncements,
-  fetchCourseNameById
+  fetchCourseNameById,
+  getCourseNameById
 };

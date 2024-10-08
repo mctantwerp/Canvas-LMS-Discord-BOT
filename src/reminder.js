@@ -1,20 +1,18 @@
-/*  
-    const apiUrlAssig = "https://canvas.kdg.be/api/v1/courses/49719/assignments";
-    const apiData = await API.regularCanvasAPICall(apiUrlAssig, requestOptions.basic, client);
-    reminderController.test(apiData)
-  */
+const helperFunctions = require("./helperFunctions.js");
+const embedBuilder = require("./embedBuilder.js");
 
-async function sendReminder(apiData){
-    if(apiData === null){
+async function sendReminder(assignment, db, course_name, channel) {
+    if (assignment === null) {
         return;
     }
-    if(apiData === undefined){
+    if (assignment === undefined) {
         return;
     }
-    if(apiData.due_at === null){
-        return ;
+    if (assignment.due_at === null) {
+        return;
     }
-    const date = apiData.due_at;
+
+    const date = assignment.due_at;
     const month = date.split(/[-T]/)[1];
     const year = date.split(/[-T]/)[0];
 
@@ -38,16 +36,60 @@ async function sendReminder(apiData){
 
 
 
-    if(year === currentYear && month === currentMonth && dayBeforeAssingment === currentDay){
-        return "Title: " + apiData.name + "\ndescription: " + apiData.description;
+    if (year === currentYear && month === currentMonth && dayBeforeAssingment === currentDay) {
+
+        //get reminder status from database
+        const remindedBool = await checkReminder(db, 1, assignment.id)
+        //if reminder has been sent, skip
+        if (remindedBool === 1) {
+            console.log(`Reminder already sent for ${assignment.id}`);
+            return;
+        }
+        //update reminder value in database to not send again
+        await updateReminder(db, 1, assignment.id);
+        //send reminder in discord
+        const assignmentHTMLtoText = helperFunctions.announcementHTMLtoTextONLY(assignment.description);
+        const embed = embedBuilder.createAssignmentReminderEmbed(assignment, course_name, assignmentHTMLtoText, 1);
+        // Send to channel
+        channel.send({ embeds: [embed] });
+
     }
-    else if(year === currentYear && month === currentMonth && threeDaysBeforeAssingment === currentDay){
-        return "Title: " + apiData.name + "\ndescription: " + apiData.description;
-    }
-    else if(year === currentYear && month === currentMonth && weekBeforeAssignment === currentDay){
-        return "Title: " + apiData.name + "\ndescription: " + apiData.description;
+    else if (year === currentYear && month === currentMonth && threeDaysBeforeAssingment === currentDay) {
+
+        //get reminder status from database
+        const remindedBool = await checkReminder(db, 3, assignment.id)
+        //if reminder has been sent, skip
+        if (remindedBool === 1) {
+            return;
+        }
+        //update reminder value in database to not send again
+        await updateReminder(db, 3, assignment.id);
+        //send reminder in discord
+        const assignmentHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(assignment.description);
+        const embed = embedBuilder.createAssignmentReminderEmbed(assignment, course_name, assignmentHTMLtoText, 3);
+        // Send to channel
+        channel.send({ embeds: [embed] });
+        console.log(`reminder posted for ${assignment.id}`);
+
     }
 
+    async function updateReminder(db, amount, assignment_id) {
+        try {
+            await db.query(`UPDATE assignments SET is_reminded_${amount}days = 1 WHERE assignment_id = ?`, [assignment_id]);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function checkReminder(db, amount, assignment_id) {
+        try {
+            const [rows] = await db.query(`SELECT is_reminded_${amount}days FROM assignments WHERE assignment_id = ?`, [assignment_id]);
+            return rows[0][`is_reminded_${amount}days`];
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 
