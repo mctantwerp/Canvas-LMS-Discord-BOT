@@ -1,7 +1,7 @@
 //we use env file for secret tokens
 require("dotenv").config();
 const courseHandler = require("./courseHandler.js");
-const { REST, Routes, SlashCommandBuilder, ChannelType } = require('discord.js');
+const { REST, Routes, SlashCommandBuilder } = require('discord.js');
 
 //info needed
 const botToken = process.env.DISCORD_TOKEN;
@@ -10,22 +10,8 @@ const serverID = process.env.SERVER_ID;
 
 const rest = new REST().setToken(botToken);
 
-const slashRegister = async (db, client) => {
+const slashRegister = async (db) => {
     try {
-
-        //get all channels of server
-        var guild = await client.guilds.fetch(process.env.SERVER_ID); // Fetch the guild
-        var channels = await guild.channels.fetch(); // Fetch all channels in the guild
-
-        //filter only text channels
-        var textChannels = channels.filter(channel => channel.type === ChannelType.GuildText);
-
-        //map the text channels to an array of objects
-        var channelMap = await textChannels.map(channel => ({
-            name: channel.name, //will be displayed to user
-            value: channel.id.toString(), //will be returned value, used to process user input
-        }));
-
         //get courses from database
         var courses = await courseHandler.getAllCourses(db);
         //mapping so it can be used in .addChoices()
@@ -66,22 +52,20 @@ const slashRegister = async (db, client) => {
                 new SlashCommandBuilder()
                     .setName('add_channel_to_course') // Set the command name
                     .setDescription('Assign a specific channel to a course.') // Set the command description
-                    .addStringOption(option =>
+                    .addIntegerOption(option =>
                         option.setName('course_id')
                             .setDescription('Enter the course ID')
-                            .setRequired(true)
-                            .addChoices(courses)
+                            .setRequired(true) // User must input the course ID
                     )
                     .addStringOption(option =>
                         option.setName('course_name')
                             .setDescription('Enter the course name')
-                            .setRequired(true) //user must input the course name
+                            .setRequired(true) // User must input the course name
                     )
                     .addStringOption(option =>
                         option.setName('channel_discord_id')
                             .setDescription('Enter the Discord channel ID')
-                            .setRequired(true) //user must input the Discord channel ID
-                            .addChoices(channelMap) //give user choices for channels
+                            .setRequired(true) // User must input the Discord channel ID
                     ),
 
                 //GET ALL COURSES
