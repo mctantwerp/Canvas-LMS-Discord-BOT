@@ -72,6 +72,24 @@ async function sendReminder(assignment, db, course_name, channel) {
         console.log(`reminder posted for ${assignment.id}`);
 
     }
+    else if (year === currentYear && month === currentMonth && weekBeforeAssignment === currentDay) {
+
+        //get reminder status from database
+        const remindedBool = await checkReminder(db, 3, assignment.id)
+        //if reminder has been sent, skip
+        if (remindedBool === 1) {
+            return;
+        }
+        //update reminder value in database to not send again
+        await updateReminder(db, 7, assignment.id);
+        //send reminder in discord
+        const assignmentHTMLtoText = await helperFunctions.announcementHTMLtoTextONLY(assignment.description);
+        const embed = embedBuilder.createAssignmentReminderEmbed(assignment, course_name, assignmentHTMLtoText, 7);
+        // Send to channel
+        channel.send({ embeds: [embed] });
+        console.log(`reminder posted for ${assignment.id}`);
+
+    }
 
     async function updateReminder(db, amount, assignment_id) {
         try {

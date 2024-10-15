@@ -109,7 +109,7 @@ client.on("interactionCreate", async (interaction) => {
           for (const assig of assignment) {
             // Only pass the assignment message to helper if it exists
             const assignmentHTMLtoText = assig.description ? await helperFunctions.announcementHTMLtoTextONLY(assig.description) : "";
-
+            console.log(assig);
             // Use createAssignmentEmbed which already handles empty cases
             const embed = embedBuilder.createAssignmentEmbed(assig, course_name, assignmentHTMLtoText);
 

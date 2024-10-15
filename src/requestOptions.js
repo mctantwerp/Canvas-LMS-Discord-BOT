@@ -47,7 +47,7 @@ const getUpcomingAssignments = {
         'Authorization': `Bearer ${apiKey}`
     },
     params: {
-        bucket: 'upcoming',
+        bucket: 'future',
     }
 };
 const getFutureAssignments = {
