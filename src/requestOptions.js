@@ -50,7 +50,16 @@ const getUpcomingAssignments = {
         bucket: 'upcoming',
     }
 };
+const getFutureAssignments = {
+    method: 'GET',
+    headers: {
+        'Authorization': `Bearer ${apiKey}`
+    },
+    params: {
+        bucket: 'future',
+    }
+};
 
 module.exports = {
-    basic, getLatestAnnouncementCall, getEnrolledCourses, getUpcomingAssignments, getUpcomingAnnouncements
+    basic, getLatestAnnouncementCall, getEnrolledCourses, getUpcomingAssignments, getUpcomingAnnouncements, getFutureAssignments
 }

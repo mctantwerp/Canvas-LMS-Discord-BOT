@@ -34,7 +34,7 @@ function createAssignmentEmbed(assignment, course_name, assignmentHTMLtoText) {
         .addFields(
             { name: "Course Name", value: course_name, inline: true },
             { name: 'Due Date', value: assignment.due_at ? Intl.DateTimeFormat(timeFormat).format(new Date(assignment.due_at)) : "No deadline given", inline: true },
-            { name: 'Points Possible', value: assignment.points_possible !== undefined ? assignment.points_possible.toString() : "No points possible", inline: true },
+            { name: 'Points Possible', value: assignment.points_possible !== null ? assignment.points_possible.toString() : "No points possible", inline: true },
             { name: 'Link', value: assignment.html_url, }
         )
         .setFooter({ text: 'The unofficial Canvas Bot!', iconURL: 'https://i.imgur.com/645X62y.png' });

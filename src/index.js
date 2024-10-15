@@ -33,7 +33,7 @@ client.on("ready", async () => {
       await pollingFunctions.pollAnnouncements(db, requestOptions.getUpcomingAnnouncements(currentDate), client);
       await delay(5000);
       //polls for assignments of UPCOMING --> within 7 days
-      await pollingFunctions.pollAssignments(db, requestOptions.getUpcomingAssignments, client);
+      await pollingFunctions.pollAssignments(db, requestOptions.getFutureAssignments, client);
       await delay(5000);
       //register commands, needed for slash commands -- if user adds new course, then we need to register the new course for commands like /get_latest_announcement
       await slashDeploy.slashRegister(db);
@@ -88,14 +88,20 @@ client.on("interactionCreate", async (interaction) => {
 
         //create course api url
         const course_id = interaction.options.getString("course_name");
-        const apiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course_id}/assignments?bucket=upcoming`;
+        const apiUrl = `${process.env.CANVAS_BASE_URL}/courses/${course_id}/assignments`;
 
         //get course name based on user inputted ID
         const course_name = await announcementHandler.getCourseNameById(course_id, db);
 
         //use this api url for fetching announcements
-        const assignment = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
+        var assignment = await API.axiosCanvasAPICall(apiUrl, requestOptions.getFutureAssignments);
 
+
+        //filter for assignments only in future, this is to counter assignments that are old but have no due_date which makes them still show up.
+        assignment = assignment.filter(assignment => {
+          const dueDate = new Date(assignment.due_at);
+          return dueDate > new Date();
+        })
         const embeds = [];
 
         if (Array.isArray(assignment) && assignment.length > 0) {
