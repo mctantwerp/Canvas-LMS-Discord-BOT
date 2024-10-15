@@ -94,7 +94,7 @@ client.on("interactionCreate", async (interaction) => {
         const course_name = await announcementHandler.getCourseNameById(course_id, db);
 
         //use this api url for fetching announcements
-        const assignment = await API.regularCanvasAPICall(apiUrl, requestOptions.basic, client);
+        const assignment = await API.axiosCanvasAPICall(apiUrl, requestOptions.getUpcomingAssignments);
 
         const embeds = [];
 
@@ -103,7 +103,7 @@ client.on("interactionCreate", async (interaction) => {
           for (const assig of assignment) {
             // Only pass the assignment message to helper if it exists
             const assignmentHTMLtoText = assig.description ? await helperFunctions.announcementHTMLtoTextONLY(assig.description) : "";
-
+            console.log(assig);
             // Use createAssignmentEmbed which already handles empty cases
             const embed = embedBuilder.createAssignmentEmbed(assig, course_name, assignmentHTMLtoText);
 
