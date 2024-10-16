@@ -75,7 +75,7 @@ async function sendReminder(assignment, db, course_name, channel) {
     else if (year === currentYear && month === currentMonth && weekBeforeAssignment === currentDay) {
 
         //get reminder status from database
-        const remindedBool = await checkReminder(db, 3, assignment.id)
+        const remindedBool = await checkReminder(db, 7, assignment.id)
         //if reminder has been sent, skip
         if (remindedBool === 1) {
             return;
