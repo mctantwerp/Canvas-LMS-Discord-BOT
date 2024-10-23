@@ -28,8 +28,14 @@ async function postAnnouncementsAndSave(client, announcements, channel_id, db, c
       announcement.message
     );
 
-    //save in db
-    await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText, course_id);
+
+    if (announcementHTMLtoText.length > 4096) {
+      await announcementHandler.saveAnnouncement(announcement, db, "too long check canvas for this announcement", course_id);
+    }
+    else {
+      //save in db
+      await announcementHandler.saveAnnouncement(announcement, db, announcementHTMLtoText, course_id);
+    }
 
     //get course name
     var course_name = await announcementHandler.fetchCourseNameById(course_id, db);
