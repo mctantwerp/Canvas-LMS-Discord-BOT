@@ -13,7 +13,9 @@ function announcementHTMLtoText(data, client) {
 
     while (startMessage.indexOf("&nbsp;") !== -1) {
         startMessage = startMessage.replace("&nbsp;", "");
+        
     }
+    startMessage = startMessage.replace(/<table[^>]*>[\s\S]*?<\/table>/gi, '');
     endMessage = startMessage.replace(/<(?:.|\n)*?>/gm, '');
     return "```" + endMessage + "```";
 }
