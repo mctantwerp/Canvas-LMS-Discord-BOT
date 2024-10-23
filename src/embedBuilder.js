@@ -30,7 +30,7 @@ function createAssignmentEmbed(assignment, course_name, assignmentHTMLtoText) {
     return new EmbedBuilder()
         .setColor('e63f3b')
         .setTitle(`📝 -- ${assignment.name}`)
-        .setDescription(`${assignmentHTMLtoText ? assignmentHTMLtoText : "No description available for this assignment."}`)
+        .setDescription(`${assignmentHTMLtoText ? assignmentHTMLtoText.toString().substring(0, 4096) : "No description available for this assignment."}`)
         .addFields(
             { name: "Course Name", value: course_name, inline: true },
             { name: 'Due Date', value: assignment.due_at ? Intl.DateTimeFormat(timeFormat).format(new Date(assignment.due_at)) : "No deadline given", inline: true },
