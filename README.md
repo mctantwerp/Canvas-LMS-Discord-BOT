@@ -63,6 +63,6 @@ We've built several useful slash commands to enhance the user experience and giv
 And that's it! 🎉 You’re now ready to deploy your CanvasBot and stay on top of announcements and assignments in Discord. Enjoy!
 
 ## Contact
-Gilles Serrien - [serriengilles@gmail.com](mailto:serriengilles@gmail.com) - [LinkedIn](https://www.linkedin.com/in/gillesserrien/)
+Gilles Serrien - [serriengilles@gmail.com](mailto:serriengilles@gmail.com) - [LinkedIn](https://www.linkedin.com/in/gillesserrien/) - [Discord: kingykongie]
 
-Rinus Van Linden - [rinus.vanlinden@gmail.com](mailto:rinus.vanlinden@gmail.com) - [LinkedIn](https://www.linkedin.com/in/rinus-van-linden-a8b454292/)
+Rinus Van Linden - [rinus.vanlinden@gmail.com](mailto:rinus.vanlinden@gmail.com) - [LinkedIn](https://www.linkedin.com/in/rinus-van-linden-a8b454292/) - [Discord: dark3art]
