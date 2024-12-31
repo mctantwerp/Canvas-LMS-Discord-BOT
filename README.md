@@ -1,6 +1,10 @@
 # The Unofficial Canvas Bot.
 ![image](https://github.com/user-attachments/assets/97e68a62-f6e9-41d5-b2fe-708b49464401)
 
+## Alpha Version
+
+This release is in the alpha stage. It is functional but may contain bugs. We are looking for testers to help identify issues and suggest improvements. Please report any problems you encounter via GitHub Issues.
+
 ## Welcome to the Setup Guide for Your Canvas Discord Bot! 🎉
 
 This bot is designed to automatically fetch new announcements and assignments from your Canvas courses and post them in a designated Discord channel. The bot will also send reminders for assignments with a 7 day, 3 day, and 1 day notice.
