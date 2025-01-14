@@ -24,8 +24,12 @@ This bot is designed to automatically fetch new announcements and assignments fr
 2. Create a `.env` file (use the example provided).
 3. In your Discord application, go to **bot** -> **reset token**, and set this as the `DISCORD_TOKEN` in your `.env`.
 4. Generate your Canvas API token via [Canvas Settings](https://canvas.kdg.be/profile/settings) and set this as `CANVAS_API`.
-5. Update the `CANVAS_COURSES_URL` and `CANVAS_BASE_URL` with your institution's information.
-6. Add your `SERVER_ID` and `BOT_ID` to the `.env`. This will help you set commands faster without the typical wait. *(Find your `SERVER_ID` by right-clicking your server icon -> **Copy Server ID**, and your `BOT_ID` by right-clicking the bot in the server -> **Copy User ID**).* Make sure to enable discord developer tools *(User settings -> Advanced -> enable "Developer mode")* for this to be an available option.
+5. Update the `CANVAS_COURSES_URL` and `CANVAS_BASE_URL` with your institution's Canvas domain. Replace `<YOUR-CANVAS-LINK>` with the appropriate domain for your school.  
+This could be for example: `canvas.kdg.be`
+
+Ensure you only change the domain part (e.g., `github.be`) to match your institution's Canvas domain.
+
+7. Add your `SERVER_ID` and `BOT_ID` to the `.env`. This will help you set commands faster without the typical wait. *(Find your `SERVER_ID` by right-clicking your server icon -> **Copy Server ID**, and your `BOT_ID` by right-clicking the bot in the server -> **Copy User ID**).* Make sure to enable discord developer tools *(User settings -> Advanced -> enable "Developer mode")* for this to be an available option.
 
 ### Step 3: Set Up Your Database 🛠️
 - Run the queries in the `discordbot_setupdb.sql` file from the repository to set up your database correctly.
